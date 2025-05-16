@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block content %}
-	<div class="jumbotron">
+	<div class="container-fluid bg-light p-5 text-center mb-4">
 		<div class="container">
 			<h1>Notifications</h1>
 		</div>
@@ -11,27 +11,27 @@
 			<div class="col-md-12">
 				{% with form = Forms.notifications.NotificationForm() %}
 				<form method="POST" id="notifications_form" autocomplete="off">
-					<div class="form-group">
+					<div class="mb4-">
 						<b>{{ form.title.label }}</b>
 						{{ form.title(class="form-control") }}
 						<small class="form-text text-muted">
 							{{ form.title.description }}
 						</small>
 					</div>
-					<div class="form-group">
+					<div class="mb4-">
 						<b>{{ form.content.label }}</b>
 						{{ form.content(class="form-control", rows="3") }}
 						<small class="form-text text-muted">
 							{{ form.content.description }}
 						</small>
 					</div>
-					<div class="form-row">
+					<div class="row">
 						<div class="col">
-							<div class="form-group">
+							<div class="mb4-">
 								<b>{{ form.type.label }}</b>
 							</div>
 							{% for radio in form.type %}
-								<div class="form-check form-check-inline pr-1">
+								<div class="form-check form-check-inline pe-1">
 									{{ radio(class="form-check-input") }}
 									{{ radio.label(class="form-check-label") }}
 								</div>
@@ -41,7 +41,7 @@
 							</small>
 						</div>
 						<div class="col">
-							<div class="form-group">
+							<div class="mb4-">
 								<b>{{ form.sound.label }}</b>
 							</div>
 							<div class="form-check">
@@ -53,7 +53,7 @@
 							</small>
 						</div>
 					</div>
-					<div class="float-right">
+					<div class="float-end">
 						{{ form.submit(class="btn btn-success text-center") }}
 					</div>
 				</form>
@@ -69,8 +69,7 @@
 				<div id="notifications-list">
 				{% for notification in notifications %}
 					<div class="card bg-light mb-4">
-						<button type="button" data-notif-id="{{ notification.id }}" class="delete-notification close position-absolute p-3 right0" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
+						<button type="button" data-notif-id="{{ notification.id }}" class="delete-notification btn-close position-absolute p-3 right0" data-dismiss="alert" aria-label="Close">
 						</button>
 						<div class="card-body">
 							<h3 class="card-title">{{ notification.title }}</h3>

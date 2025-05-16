@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div class="jumbotron">
+<div class="container-fluid bg-light p-5 text-center mb-4">
 	<div class="container">
 		<h1>{% if type %}{{ type|title }} {% endif %}Submissions</h1>
 	</div>
@@ -26,13 +26,13 @@
 
 			{% with form = Forms.submissions.SubmissionSearchForm(field=field, q=q) %}
 			<form method="GET" class="form-inline">
-				<div class="form-group col-md-2 pr-0">
+				<div class="mb4- col-md-2 pr-0">
 					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
-				<div class="form-group col-md-8">
+				<div class="mb4- col-md-8">
 					{{ form.q(class="form-control w-100", placeholder="Search for matching submission") }}
 				</div>
-				<div class="form-group col-md-2">
+				<div class="mb4- col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
 						<i class="fas fa-search" aria-hidden="true"></i>
 					</button>
@@ -46,23 +46,23 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<div class="float-right pb-3">
+			<div class="float-end pb-3">
 				<div class="btn-group" role="group">
 					{% if type == "incorrect" %}
-					<button type="button" class="btn btn-outline-success" data-toggle="tooltip" title="Mark submissions correct" id="correct-flags-button">
+					<button type="button" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Mark submissions correct" id="correct-flags-button">
 						<i class="btn-fa fas fa-check"></i>
 					</button>
 					{% endif %}
 					{% if request.args.get("full") %}
-					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show truncated flags" id="show-short-flags-button">
+					<button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Show truncated flags" id="show-short-flags-button">
 						<i class="btn-fa far fa-flag"></i>
 					</button>
 					{% else %}
-					<button type="button" class="btn btn-outline-primary" data-toggle="tooltip" title="Show full flags" id="show-full-flags-button">
+					<button type="button" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Show full flags" id="show-full-flags-button">
 						<i class="btn-fa fas fa-flag"></i>
 					</button>
 					{% endif %}
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete selected submissions" id="submission-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete selected submissions" id="submission-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>

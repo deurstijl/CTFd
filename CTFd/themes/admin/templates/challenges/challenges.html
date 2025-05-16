@@ -6,11 +6,11 @@
 
 
 {% block content %}
-<div class="jumbotron">
+<div class="container-fluid bg-light p-5 text-center mb-4">
 	<div class="container">
 		<h1>Challenges
 			<a class="no-decoration" href="{{ url_for('admin.challenges_new') }}">
-				<span role="button" data-toggle="tooltip" title="Create Challenge">
+				<span role="button" data-bs-toggle="tooltip" title="Create Challenge">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</span>
 			</a>
@@ -31,13 +31,13 @@
 
 			{% with form = Forms.challenges.ChallengeSearchForm(field=field, q=q) %}
 			<form method="GET" class="form-inline">
-				<div class="form-group col-md-2">
+				<div class="mb4- col-md-2">
 					{{ form.field(class="form-control custom-select w-100") }}
 				</div>
-				<div class="form-group col-md-8">
+				<div class="mb4- col-md-8">
 					{{ form.q(class="form-control w-100", placeholder="Search for matching challenge") }}
 				</div>
-				<div class="form-group col-md-2">
+				<div class="mb4- col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
 						<i class="fas fa-search" aria-hidden="true"></i>
 					</button>
@@ -51,12 +51,12 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<div class="float-right pb-3">
+			<div class="float-end pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Challenges" id="challenges-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Edit Challenges" id="challenges-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Challenges" id="challenges-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Challenges" id="challenges-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>

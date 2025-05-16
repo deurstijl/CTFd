@@ -1,34 +1,34 @@
 {% with form = Forms.teams.TeamEditForm(obj=team) %}
 {% from "admin/macros/forms.html" import render_extra_fields %}
 <form id="team-info-edit-form" method="POST">
-	<div class="form-group">
+	<div class="mb4-">
 		{{ form.name.label }}
 		{{ form.name(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="form-group">
+	<div class="mb4-">
 		{{ form.email.label }}
 		{{ form.email(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="form-group">
+	<div class="mb4-">
 		{{ form.password.label }}
 		{{ form.password(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="form-group">
+	<div class="mb4-">
 		{{ form.website.label }}
 		{{ form.website(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="form-group">
+	<div class="mb4-">
 		{{ form.affiliation.label }}
 		{{ form.affiliation(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="form-group">
+	<div class="mb4-">
 		{{ form.country.label }}
 		{{ form.country(class="form-control custom-select", autocomplete="off") }}
 	</div>
 
 	{{ render_extra_fields(form.extra) }}
 
-	<div class="form-group">
+	<div class="mb4-">
 		<div class="form-check form-check-inline">
 			{{ form.hidden(class="form-check-input", autocomplete="off") }}
 			{{ form.hidden.label(class="form-check-label") }}
@@ -41,6 +41,6 @@
 	<div id="results">
 
 	</div>
-	{{ form.submit(id="update-team", class="btn btn-primary btn-outlined float-right modal-action") }}
+	{{ form.submit(id="update-team", class="btn btn-primary btn-outlined float-end modal-action") }}
 </form>
 {% endwith %}

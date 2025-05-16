@@ -1,24 +1,21 @@
 import "./main";
 import CTFd from "../compat/CTFd";
-import $ from "jquery";
 import "../compat/json";
 import { ezAlert } from "../compat/ezq";
 
+// API toggle functions
 const api_func = {
-  users: (x, y) => CTFd.api.patch_user_public({ userId: x }, y),
-  teams: (x, y) => CTFd.api.patch_team_public({ teamId: x }, y),
+  users: (id, data) => CTFd.api.patch_user_public({ userId: id }, data),
+  teams: (id, data) => CTFd.api.patch_team_public({ teamId: id }, data),
 };
 
-function toggleAccount() {
-  const $btn = $(this);
-  const id = $btn.data("account-id");
-  const state = $btn.data("state");
-  let hidden = undefined;
-  if (state === "visible") {
-    hidden = true;
-  } else if (state === "hidden") {
-    hidden = false;
-  }
+// Toggle a single account (used with `.scoreboard-toggle`)
+function toggleAccount(e) {
+  const btn = e.currentTarget;
+  const id = btn.dataset.accountId;
+  const state = btn.dataset.state;
+
+  const hidden = state === "visible";
 
   const params = {
     hidden: hidden,
@@ -26,80 +23,86 @@ function toggleAccount() {
 
   api_func[CTFd.config.userMode](id, params).then((response) => {
     if (response.success) {
-      if (hidden) {
-        $btn.data("state", "hidden");
-        $btn.addClass("btn-danger").removeClass("btn-success");
-        $btn.text("Hidden");
-      } else {
-        $btn.data("state", "visible");
-        $btn.addClass("btn-success").removeClass("btn-danger");
-        $btn.text("Visible");
-      }
+      btn.dataset.state = hidden ? "hidden" : "visible";
+      btn.classList.toggle("btn-danger", hidden);
+      btn.classList.toggle("btn-success", !hidden);
+      btn.textContent = hidden ? "Hidden" : "Visible";
     }
   });
 }
 
+// Toggle multiple selected accounts
 function toggleSelectedAccounts(selectedAccounts, action) {
   const params = {
-    hidden: action === "hidden" ? true : false,
+    hidden: action === "hidden",
   };
+
   const reqs = [];
-  for (let accId of selectedAccounts.accounts) {
-    reqs.push(api_func[CTFd.config.userMode](accId, params));
-  }
-  for (let accId of selectedAccounts.users) {
-    reqs.push(api_func["users"](accId, params));
-  }
-  Promise.all(reqs).then((_responses) => {
+
+  selectedAccounts.accounts.forEach((id) => {
+    reqs.push(api_func[CTFd.config.userMode](id, params));
+  });
+
+  selectedAccounts.users.forEach((id) => {
+    reqs.push(api_func.users(id, params));
+  });
+
+  Promise.all(reqs).then(() => {
     window.location.reload();
   });
 }
 
+// Get selected IDs from the active tab and prompt for visibility
 function bulkToggleAccounts(_event) {
-  // Get selected account and user IDs but only on the active tab.
-  // Technically this could work for both tabs at the same time but that seems like
-  // bad behavior. We don't want to accidentally unhide a user/team accidentally
-  let accountIDs = $(".tab-pane.active input[data-account-id]:checked").map(
-    function () {
-      return $(this).data("account-id");
-    },
-  );
+  const activeTab = document.querySelector(".tab-pane.active");
 
-  let userIDs = $(".tab-pane.active input[data-user-id]:checked").map(
-    function () {
-      return $(this).data("user-id");
-    },
-  );
+  const accountIDs = Array.from(
+    activeTab.querySelectorAll('input[data-account-id]:checked')
+  ).map((el) => el.dataset.accountId);
 
-  let selectedUsers = {
+  const userIDs = Array.from(
+    activeTab.querySelectorAll('input[data-user-id]:checked')
+  ).map((el) => el.dataset.userId);
+
+  const selectedUsers = {
     accounts: accountIDs,
     users: userIDs,
   };
 
   ezAlert({
     title: "Toggle Visibility",
-    body: $(`
-    <form id="scoreboard-bulk-edit">
-      <div class="form-group">
-        <label>Visibility</label>
-        <select name="visibility" data-initial="">
-          <option value="">--</option>
-          <option value="visible">Visible</option>
-          <option value="hidden">Hidden</option>
-        </select>
-      </div>
-    </form>
-    `),
+    body: `
+      <form id="scoreboard-bulk-edit">
+  <div class="form-group mb-3">
+    <label for="visibility-select" class="form-label">Visibility</label>
+    <select id="visibility-select" name="visibility" class="form-select" required>
+      <option value="">--</option>
+      <option value="visible">Visible</option>
+      <option value="hidden">Hidden</option>
+    </select>
+  </div>
+</form>
+    `,
     button: "Submit",
-    success: function () {
-      let data = $("#scoreboard-bulk-edit").serializeJSON(true);
-      let state = data.visibility;
-      toggleSelectedAccounts(selectedUsers, state);
+    success: () => {
+      const form = document.getElementById("scoreboard-bulk-edit");
+      const formData = new FormData(form);
+      const state = formData.get("visibility");
+      if (state) {
+        toggleSelectedAccounts(selectedUsers, state);
+      }
     },
   });
 }
 
-$(() => {
-  $(".scoreboard-toggle").click(toggleAccount);
-  $("#scoreboard-edit-button").click(bulkToggleAccounts);
+// Attach event listeners
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".scoreboard-toggle").forEach((btn) => {
+    btn.addEventListener("click", toggleAccount);
+  });
+
+  const editBtn = document.getElementById("scoreboard-edit-button");
+  if (editBtn) {
+    editBtn.addEventListener("click", bulkToggleAccounts);
+  }
 });

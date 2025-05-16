@@ -47,7 +47,7 @@
 			<div class="modal-body clearfix">
 				{% with form = Forms.teams.TeamInviteForm() %}
 				<form method="POST">
-					<div class="form-group">
+					<div class="mb4-">
 						<b>{{ form.link.label }}</b>
 						<div class="input-group mb-3">
 							{{ form.link(id="team-invite-link", class="form-control") }}
@@ -110,7 +110,7 @@
 				</button>
 			</div>
 			<div class="modal-body clearfix">
-				<div class="form-group">
+				<div class="mb4-">
 					<label for="award-member-input">Member</label>
 					<select class="form-control custom-select" id="award-member-input">
 						<option value=""> -- </option>
@@ -150,18 +150,18 @@
 	</div>
 </div>
 
-<div class="jumbotron">
+<div class="container-fluid bg-light p-5 text-center mb-4">
 	<div class="container">
 		<h1 id="team-id" class="text-center">{{ team.name }}</h1>
 		<div class="mb-2">
 			{% if team.verified %}
-				<span class="badge badge-success">verified</span>
+				<span class="badge bg-success">verified</span>
 			{% endif %}
 			{% if team.hidden %}
-				<span class="badge badge-danger">hidden</span>
+				<span class="badge bg-danger">hidden</span>
 			{% endif %}
 			{% if team.banned %}
-				<span class="badge badge-danger">banned</span>
+				<span class="badge bg-danger">banned</span>
 			{% endif %}
 		</div>
 
@@ -216,40 +216,40 @@
 		<hr class="w-50">
 		<div class="pt-3">
 			<a class="edit-team text-dark">
-				<i class="btn-fa fas fa-pencil-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-pencil-alt fa-2x px-2" data-bs-toggle="tooltip" data-placement="top"
 				   title="Edit Team"></i>
 			</a>
 			<a class="invite-team text-dark">
-				<i class="btn-fa fas fa-ticket-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-ticket-alt fa-2x px-2" data-bs-toggle="tooltip" data-placement="top"
 				   title="Team Invite Link"></i>
 			</a>
 			<a class="members-team text-dark">
-				<i class="btn-fa fas fa-user-plus fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-user-plus fa-2x px-2" data-bs-toggle="tooltip" data-placement="top"
 				   title="Add Team Members"></i>
 			</a>
 			<a class="edit-captain text-dark">
-				<i class="btn-fa fas fa-user-tag fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-user-tag fa-2x px-2" data-bs-toggle="tooltip" data-placement="top"
 				   title="Choose Captain"></i>
 			</a>
 			<a class="award-team text-dark">
-				<i class="btn-fa fas fa-trophy fa-2x px-2" data-toggle="tooltip" data-placement="top" title="Award Team Member"></i>
+				<i class="btn-fa fas fa-trophy fa-2x px-2" data-bs-toggle="tooltip" data-placement="top" title="Award Team Member"></i>
 			</a>
 			<a class="delete-team text-dark">
-				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-trash-alt fa-2x px-2" data-bs-toggle="tooltip" data-placement="top"
 				   title="Delete Team"></i>
 			</a>
 		</div>
 		<div class="pt-3">
 			<a class="statistics-team text-dark">
-				<i class="btn-fa fas fa-chart-pie fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-chart-pie fa-2x px-2" data-bs-toggle="tooltip" data-placement="top"
 				   title="Team Statistics"></i>
 			</a>
 			<a class="addresses-team text-dark">
-				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-toggle="tooltip" data-placement="top" title="IP Addresses"></i>
+				<i class="btn-fa fas fa-network-wired fa-2x px-2" data-bs-toggle="tooltip" data-placement="top" title="IP Addresses"></i>
 			</a>
 			{% if team.website %}
 			<a href="{{ team.website }}" target="_blank" class="text-dark" rel="noopener">
-				<i class="btn-fa fas fa-external-link-alt fa-2x px-2" data-toggle="tooltip" data-placement="top"
+				<i class="btn-fa fas fa-external-link-alt fa-2x px-2" data-bs-toggle="tooltip" data-placement="top"
 					title="{{ team.website }}" aria-hidden="true"></i>
 			</a>
 			{% endif %}
@@ -297,7 +297,7 @@
 						</td>
 						<td class="text-center">
 							<span class="delete-member cursor-pointer" member-id="{{ member.id }}"
-								  member-name="{{ member.name }}" data-toggle="tooltip"
+								  member-name="{{ member.name }}" data-bs-toggle="tooltip"
 								  data-placement="top" title="Remove {{ member.name }}">
 								<i class="fas fa-times"></i>
 							</span>
@@ -310,16 +310,16 @@
 	</div>
 
 	<nav class="nav nav-tabs nav-fill pt-5" id="myTab" role="tablist">
-		<a class="nav-item nav-link active" id="nav-solves-tab" data-toggle="tab" href="#nav-solves" role="tab"
+		<a class="nav-item nav-link active" id="nav-solves-tab" data-bs-toggle="tab" href="#nav-solves" role="tab"
 		   aria-controls="nav-solves" aria-selected="true">Solves</a>
 
-		<a class="nav-item nav-link" id="nav-wrong-tab" data-toggle="tab" href="#nav-wrong" role="tab"
+		<a class="nav-item nav-link" id="nav-wrong-tab" data-bs-toggle="tab" href="#nav-wrong" role="tab"
 		   aria-controls="nav-wrong" aria-selected="false">Fails</a>
 
-		<a class="nav-item nav-link" id="nav-awards-tab" data-toggle="tab" href="#nav-awards" role="tab"
+		<a class="nav-item nav-link" id="nav-awards-tab" data-bs-toggle="tab" href="#nav-awards" role="tab"
 		   aria-controls="nav-awards" aria-selected="false">Awards</a>
 
-		<a class="nav-item nav-link" id="nav-missing-tab" data-toggle="tab" href="#nav-missing" role="tab"
+		<a class="nav-item nav-link" id="nav-missing-tab" data-bs-toggle="tab" href="#nav-missing" role="tab"
 		   aria-controls="nav-missing" aria-selected="false">Missing</a>
 	</nav>
 
@@ -328,7 +328,7 @@
 			<h3 class="text-center pt-5 d-block">Solves</h3>
 			<div class="row">
 				<div class="col-md-12">
-					<div class="float-right pb-3">
+					<div class="float-end pb-3">
 						<div class="btn-group" role="group">
 							<button type="button" class="btn btn-outline-danger" id="solves-delete-button">
 								<i class="btn-fa fas fa-trash-alt"></i>
@@ -394,7 +394,7 @@
 			<h3 class="text-center pt-5 d-block">Fails</h3>
 			<div class="row">
 				<div class="col-md-12">
-					<div class="float-right pb-3">
+					<div class="float-end pb-3">
 						<div class="btn-group" role="group">
 							<button type="button" class="btn btn-outline-success" id="correct-fail-button">
 								<i class="btn-fa fas fa-check"></i>
@@ -459,7 +459,7 @@
 			<h3 class="text-center pt-5 d-block">Awards</h3>
 			<div class="row">
 				<div class="col-md-12">
-					<div class="float-right pb-3">
+					<div class="float-end pb-3">
 						<div class="btn-group" role="group">
 							<button type="button" class="btn btn-outline-danger" id="awards-delete-button">
 								<i class="btn-fa fas fa-trash-alt"></i>
@@ -520,7 +520,7 @@
 			<h3 class="text-center pt-5 d-block">Missing</h3>
 			<div class="row">
 				<div class="col-md-12">
-					<div class="float-right pb-3">
+					<div class="float-end pb-3">
 						<div class="btn-group" role="group">
 							<button type="button" class="btn btn-outline-success" id="missing-solve-button">
 								<i class="btn-fa fas fa-check"></i>
