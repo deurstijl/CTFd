@@ -1,5 +1,13 @@
 <template>
-  <div id="flag-create-modal" class="modal fade" tabindex="-1">
+  <div
+    id="flag-create-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    :class="{ show: visible }"
+    :style="{ display: visible ? 'block' : 'none' }"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header text-center">
@@ -13,7 +21,7 @@
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
+            @click="$emit('close')"
             aria-label="Close"
           >
             <span aria-hidden="true">&times;</span>
@@ -24,10 +32,7 @@
           <label for="create-keys-select" class="control-label">
             Choose Flag Type
           </label>
-          <select
-            class="form-control custom-select"
-            v-model="selectedType"
-          >
+          <select class="form-control form-select" v-model="selectedType">
             <option disabled value="">--</option>
             <option value="static">static</option>
             <option value="regex">regex</option>
@@ -50,14 +55,20 @@
 
 <script>
 import StaticFlagForm from "./StaticFlagForm.vue";
-import RegexFlagForm from "./RegexFlagForm.vue"; 
-
+import RegexFlagForm from "./RegexFlagForm.vue";
 import CTFd from "../../compat/CTFd";
 
 export default {
   name: "FlagCreationForm",
   props: {
-    challenge_id: Number,
+    challenge_id: {
+      type: Number,
+      required: true,
+    },
+    visible: {
+      type: Boolean,
+      required: true,
+    },
   },
   components: {
     StaticFlagForm,
@@ -92,11 +103,35 @@ export default {
         body: JSON.stringify(params),
       })
         .then((response) => response.json())
-        .then((_response) => {
-          this.$emit("refreshFlags", this.$options.name);
+        .then((response) => {
+          if (response.success) {
+            this.$emit("refreshFlags", this.$options.name);
+            this.$emit("close");
+            this.selectedType = "";
+          } else {
+            let msg = "";
+            for (const key in response.errors) {
+              msg += response.errors[key].join("\n") + "\n";
+            }
+            alert("Error:\n" + msg);
+          }
+        })
+        .catch((err) => {
+          console.error("Flag creation error:", err);
+          alert("Unexpected error: " + err.message);
         });
     },
   },
 };
 </script>
 
+<style scoped>
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.15s linear;
+}
+.modal.show {
+  opacity: 1;
+  display: block !important;
+}
+</style>

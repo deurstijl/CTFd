@@ -1,33 +1,36 @@
 import "./main";
 import CTFd from "../compat/CTFd";
-import $ from "jquery";
-import { ezQuery } from "../compat/ezq";
 
 function deleteSelectedUsers(_event) {
-  let pageIDs = $("input[data-page-id]:checked").map(function () {
-    return $(this).data("page-id");
-  });
-  let target = pageIDs.length === 1 ? "page" : "pages";
+  const checkboxes = document.querySelectorAll("input[data-page-id]:checked");
+  const pageIDs = Array.from(checkboxes).map((el) => el.dataset.pageId);
+  const target = pageIDs.length === 1 ? "page" : "pages";
 
-  ezQuery({
-    title: "Delete Pages",
-    body: `Are you sure you want to delete ${pageIDs.length} ${target}?`,
-    success: function () {
-      const reqs = [];
-      for (var pageID of pageIDs) {
-        reqs.push(
-          CTFd.fetch(`/api/v1/pages/${pageID}`, {
-            method: "DELETE",
-          }),
-        );
-      }
-      Promise.all(reqs).then((_responses) => {
-        window.location.reload();
-      });
-    },
+  if (pageIDs.length === 0) {
+    alert("No pages selected.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to delete ${pageIDs.length} ${target}?`);
+  if (!confirmed) return;
+
+  const deleteRequests = pageIDs.map((pageID) =>
+    CTFd.fetch(`/api/v1/pages/${pageID}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+    })
+  );
+
+  Promise.all(deleteRequests).then(() => {
+    window.location.reload();
+  }).catch((err) => {
+    console.error("Failed to delete pages:", err);
+    alert("An error occurred while deleting the pages.");
   });
 }
 
-$(() => {
-  $("#pages-delete-button").click(deleteSelectedUsers);
+document.addEventListener("DOMContentLoaded", () => {
+  document
+    .getElementById("pages-delete-button")
+    ?.addEventListener("click", deleteSelectedUsers);
 });

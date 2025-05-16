@@ -1,37 +1,37 @@
 {% with form = Forms.teams.TeamCreateForm() %}
 {% from "admin/macros/forms.html" import render_extra_fields %}
 <form id="team-info-create-form" method="POST">
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.name.label }}
 		{{ form.name(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.email.label }}
 		{{ form.email(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.password.label }}
 		{{ form.password(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.website.label }}
 		<small class="float-end text-muted align-text-bottom">Optional</small>
 		{{ form.website(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.affiliation.label }}
 		<small class="float-end text-muted align-text-bottom">Optional</small>
 		{{ form.affiliation(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.country.label }}
 		<small class="float-end text-muted align-text-bottom">Optional</small>
-		{{ form.country(class="form-control custom-select", autocomplete="off") }}
+		{{ form.country(class="form-control form-select", autocomplete="off") }}
 	</div>
 
 	{{ render_extra_fields(form.extra) }}
 
-	<div class="mb4-">
+	<div class="mb-4">
 		<div class="form-check form-check-inline">
 			{{ form.hidden(class="form-check-input", autocomplete="off") }}
 			{{ form.hidden.label(class="form-check-label") }}

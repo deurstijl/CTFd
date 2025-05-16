@@ -13,14 +13,14 @@
 	</div>
 
 	<form method="POST" autocomplete="off" class="w-100">
-		<div class="mb4-">
+		<div class="mb-4">
 			<label for="ctf_theme">
 				Theme
 				<small class="form-text text-muted">
 					Switch themes to change CTFd's aesthetics
 				</small>
 			</label>
-			<select class="form-control custom-select" id="ctf_theme" name="ctf_theme">
+			<select class="form-control form-select" id="ctf_theme" name="ctf_theme">
 				<option>{{ ctf_theme }}</option>
 				{% for theme in themes %}
 					<option>{{ theme }}</option>
@@ -28,7 +28,7 @@
 			</select>
 		</div>
 
-		<div class="mb4-">
+		<div class="mb-4">
 			<div style="display: flex; justify-content: space-between; align-items: center;">
 				<label>
 					Primary Color
@@ -44,7 +44,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="mb4-">
+		<div class="mb-4">
 			<label>
 				Theme Header
 				<small class="form-text text-muted">
@@ -56,7 +56,7 @@
 			<textarea class="form-control" id="theme-header" name="theme_header" rows="7">{{ theme_header or "" }}</textarea>
 		</div>
 
-		<div class="mb4-">
+		<div class="mb-4">
 			<label>
 				Theme Footer
 				<small class="form-text text-muted">
@@ -68,7 +68,7 @@
 			<textarea class="form-control" id="theme-footer" name="theme_footer" rows="7">{{ theme_footer or "" }}</textarea>
 		</div>
 
-		<div class="mb4-">
+		<div class="mb-4">
 			<div style="display: flex; justify-content: space-between;">
 				<label for="ctf_theme">
 					Theme Settings

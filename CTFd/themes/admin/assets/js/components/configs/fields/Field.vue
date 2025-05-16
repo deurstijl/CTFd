@@ -3,7 +3,7 @@
     <div>
       <button
         type="button"
-        class="close float-right"
+        class="close float-end"
         aria-label="Close"
         @click="deleteField()"
       >
@@ -13,10 +13,10 @@
 
     <div class="row">
       <div class="col-md-3">
-        <div class="form-group">
+        <div class="mb-4">
           <label>Field Type</label>
           <select
-            class="form-control custom-select"
+            class="form-control form-select"
             v-model.lazy="field.field_type"
           >
             <option value="text">Text Field</option>
@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="col-md-9">
-        <div class="form-group">
+        <div class="mb-4">
           <label>Field Name</label>
           <input type="text" class="form-control" v-model.lazy="field.name" />
           <small class="form-text text-muted">Field name</small>
@@ -36,7 +36,7 @@
       </div>
 
       <div class="col-md-12">
-        <div class="form-group">
+        <div class="mb-4">
           <label>Field Description</label>
           <input
             type="text"
@@ -87,7 +87,7 @@
       <div class="col-md-12">
         <div class="d-block">
           <button
-            class="btn btn-sm btn-success btn-outlined float-right"
+            class="btn btn-sm btn-success btn-outlined float-end"
             type="button"
             @click="saveField()"
           >

@@ -1,7 +1,7 @@
 <template>
   <div>
     <form @submit.prevent="updateRequirements">
-      <div class="form-group scrollbox">
+      <div class="mb-4 scrollbox">
         <transition-group name="flip-list">
           <div
             class="form-check"
@@ -36,12 +36,12 @@
         </transition-group>
       </div>
 
-      <div class="form-group">
+      <div class="mb-4">
         <label>
           <b>Behavior if not unlocked</b>
         </label>
         <select
-          class="form-control custom-select"
+          class="form-control form-select"
           name="anonymize"
           v-model="selectedAnonymize"
         >
@@ -50,9 +50,9 @@
         </select>
       </div>
 
-      <div class="form-group">
+      <div class="mb-4">
         <button
-          class="btn btn-success float-right"
+          class="btn btn-success float-end"
           :disabled="!newRequirements"
         >
           Save

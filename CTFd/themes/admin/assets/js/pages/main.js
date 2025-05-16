@@ -22,6 +22,8 @@ window.dayjs = dayjs;
 window.nunjucks = nunjucks;
 window.Howl = Howl;
 
+
+
 $(() => {
   styles();
   times();

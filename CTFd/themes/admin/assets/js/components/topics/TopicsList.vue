@@ -7,7 +7,7 @@
       </h5>
     </div>
 
-    <div class="form-group">
+    <div class="mb-4">
       <label>
         Topic
         <br />
@@ -25,7 +25,7 @@
       />
     </div>
 
-    <div class="form-group">
+    <div class="mb-4">
       <ul class="list-group">
         <li
           :class="{

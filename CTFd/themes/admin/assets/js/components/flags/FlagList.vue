@@ -1,21 +1,22 @@
 <template>
   <div>
-    <div>
-      <FlagCreationForm
-        ref="FlagCreationForm"
-        :challenge_id="challenge_id"
-        @refreshFlags="refreshFlags"
-      />
-    </div>
+    <!-- Flag creation modal -->
+    <FlagCreationForm
+      :challenge_id="challenge_id"
+      :visible="showCreateModal"
+      @refreshFlags="refreshFlags"
+      @close="showCreateModal = false"
+    />
 
-    <div>
-      <FlagEditForm
-        ref="FlagEditForm"
-        :flag_id="editing_flag_id"
-        @refreshFlags="refreshFlags"
-      />
-    </div>
+    <!-- Flag edit modal -->
+    <FlagEditForm
+      :flag_id="editing_flag_id"
+      :visible="showEditModal"
+      @refreshFlags="refreshFlags"
+      @close="closeEditModal"
+    />
 
+    <!-- Flag table -->
     <table id="flagsboard" class="table table-striped">
       <thead>
         <tr>
@@ -25,7 +26,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr :name="flag.id" v-for="flag in flags" :key="flag.id">
+        <tr v-for="flag in flags" :key="flag.id">
           <td class="text-center">{{ flag.type }}</td>
           <td class="text-break">
             <pre class="flag-content">{{ flag.content }}</pre>
@@ -34,14 +35,11 @@
             <i
               role="button"
               class="btn-fa fas fa-edit edit-flag"
-              :flag-id="flag.id"
-              :flag-type="flag.type"
               @click="editFlag(flag.id)"
             ></i>
             <i
               role="button"
               class="btn-fa fas fa-times delete-flag"
-              :flag-id="flag.id"
               @click="deleteFlag(flag.id)"
             ></i>
           </td>
@@ -49,11 +47,12 @@
       </tbody>
     </table>
 
+    <!-- Add Flag Button -->
     <div class="col-md-12">
       <button
         id="flag-add-button"
-        class="btn btn-success d-inline-block float-right"
-        @click="addFlag()"
+        class="btn btn-success d-inline-block float-end"
+        @click="addFlag"
       >
         Create Flag
       </button>
@@ -62,7 +61,6 @@
 </template>
 
 <script>
-import $ from "jquery";
 import CTFd from "../../compat/CTFd";
 import FlagCreationForm from "./FlagCreationForm.vue";
 import FlagEditForm from "./FlagEditForm.vue";
@@ -73,71 +71,71 @@ export default {
     FlagEditForm,
   },
   props: {
-    challenge_id: Number,
+    challenge_id: {
+      type: Number,
+      required: true,
+    },
   },
-  data: function () {
+  data() {
     return {
       flags: [],
       editing_flag_id: null,
+      showCreateModal: false,
+      showEditModal: false,
     };
   },
   methods: {
-    loadFlags: function () {
-      CTFd.fetch(`/api/v1/challenges/${this.$props.challenge_id}/flags`, {
-        method: "GET",
-        credentials: "same-origin",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          if (response.success) {
-            this.flags = response.data;
+    async loadFlags() {
+      try {
+        const response = await CTFd.fetch(
+          `/api/v1/challenges/${this.challenge_id}/flags`,
+          {
+            method: "GET",
+            credentials: "same-origin",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
           }
-        });
-    },
-    refreshFlags(caller) {
-      this.loadFlags();
-      let modal;
-      switch (caller) {
-        case "FlagEditForm":
-          modal = this.$refs.FlagEditForm.$el;
-          $(modal).modal("hide");
-          break;
-        case "FlagCreationForm":
-          modal = this.$refs.FlagCreationForm.$el;
-          $(modal).modal("hide");
-          break;
-        default:
-          break;
+        );
+        const data = await response.json();
+        if (data.success) {
+          this.flags = data.data;
+        }
+      } catch (err) {
+        console.error("Failed to load flags:", err);
       }
     },
-    addFlag: function () {
-      let modal = this.$refs.FlagCreationForm.$el;
-      $(modal).modal();
+    refreshFlags() {
+      this.loadFlags();
+      this.showCreateModal = false;
+      this.showEditModal = false;
     },
-    editFlag: function (flag_id) {
+    addFlag() {
+      this.showCreateModal = true;
+    },
+    editFlag(flag_id) {
       this.editing_flag_id = flag_id;
-      let modal = this.$refs.FlagEditForm.$el;
-      $(modal).modal();
+      this.showEditModal = true;
     },
-    deleteFlag: function (flag_id) {
-      if (confirm("Are you sure you'd like to delete this flag?")) {
-        CTFd.fetch(`/api/v1/flags/${flag_id}`, {
+    closeEditModal() {
+      this.editing_flag_id = null;
+      this.showEditModal = false;
+    },
+    async deleteFlag(flag_id) {
+      if (!confirm("Are you sure you'd like to delete this flag?")) return;
+      try {
+        const response = await CTFd.fetch(`/api/v1/flags/${flag_id}`, {
           method: "DELETE",
-        })
-          .then((response) => {
-            return response.json();
-          })
-          .then((response) => {
-            if (response.success) {
-              this.loadFlags();
-            }
-          });
+        });
+        const result = await response.json();
+        if (result.success) {
+          this.loadFlags();
+        } else {
+          alert("Failed to delete flag.");
+        }
+      } catch (err) {
+        console.error("Delete failed:", err);
       }
     },
   },

@@ -1,7 +1,7 @@
 <!-- components/flags/RegexFlagForm.vue -->
 <template>
   <div>
-    <div class="form-group">
+    <div class="mb-4">
       <label for="regex-flag">Regular Expression</label>
       <input
         v-model="flag"
@@ -13,11 +13,11 @@
         required
       />
     </div>
-    <div class="form-group">
+    <div class="mb-4">
       <label for="regex-data">Case Sensitive</label>
       <select
         v-model="data"
-        class="form-control custom-select"
+        class="form-control form-select"
         id="regex-data"
         name="data"
       >
@@ -25,7 +25,7 @@
         <option value="false">No</option>
       </select>
     </div>
-    <button class="btn btn-success float-right" @click="submit">
+    <button class="btn btn-success float-end" @click="submit">
       Create Flag
     </button>
   </div>

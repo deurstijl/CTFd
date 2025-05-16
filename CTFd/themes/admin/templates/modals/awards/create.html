@@ -1,22 +1,22 @@
 {% with form = Forms.awards.AwardCreationForm() %}
 <form id="user-award-form" method="POST">
-	<div class="mb4-">
+	<div class="mb-4">
 		<b>{{ form.name.label }}</b>
 		{{ form.name(class="form-control", id="award-name-input") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		<b>{{ form.value.label }}</b>
 		{{ form.value(class="form-control", id="award-value-input") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		<b>{{ form.category.label }}</b>
 		{{ form.category(class="form-control", id="award-category-input") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		<b>{{ form.description.label }}</b>
 		{{ form.description(id="award-description-input", class="form-control", rows="5") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		<b>{{ form.icon.label }}</b>
 		<div class="pt-1">
 			<table class="table table-sm w-100">

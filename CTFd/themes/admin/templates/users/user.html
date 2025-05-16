@@ -9,7 +9,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Edit User</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -25,7 +25,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">User Statistics</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -41,7 +41,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Award User</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -57,7 +57,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Email User</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -73,7 +73,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">IP Addresses</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -89,7 +89,7 @@
 		<h1 id="team-id" class="text-center p-0 m-0">{{ user.name }}</h1>
 		<div class="mb-2">
 			{% if user.type == 'admin' %}
-				<span class="badge badge-primary">admin</span>
+				<span class="badge bg-primary">admin</span>
 			{% endif %}
 			{% if user.verified %}
 				<span class="badge bg-success">verified</span>
@@ -104,13 +104,13 @@
 
 			{% if user.affiliation %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">{{ user.affiliation }}</span>
+					<span class="badge bg-primary">{{ user.affiliation }}</span>
 				</h3>
 			{% endif %}
 
 			{% if user.country %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">
+					<span class="badge bg-primary">
 						<i class="flag-{{ user.country.lower() }}"></i>
 						{{ lookup_country_code(user.country) }}
 					</span>
@@ -120,7 +120,7 @@
 		<h2 id="team-email" class="text-center">{{ user.email }}</h2>
 		{% if user.oauth_id %}
 			<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-				<h3><span class="badge badge-primary">Official</span></h3>
+				<h3><span class="badge bg-primary">Official</span></h3>
 			</a>
 		{% endif %}
 
@@ -134,7 +134,7 @@
 
 		{% if user.bracket_id %}
 			<h2>
-				<span class="badge badge-secondary">
+				<span class="badge bg-secondary">
 					{{ user.bracket.name }}
 				</span>
 			</h2>
@@ -158,7 +158,7 @@
 				<small>points</small>
 			{% endif %}
 		</h3>
-		<hr class="w-50">
+		<hr class="w-50 mx-auto my-4">
 		<div class="pt-3">
 			<a class="edit-user text-dark">
 				<i class="btn-fa fas fa-user-edit fa-2x px-2" data-bs-toggle="tooltip" data-placement="top" title="Edit User"></i>

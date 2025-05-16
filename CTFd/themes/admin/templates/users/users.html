@@ -30,14 +30,14 @@
 			{% endif %}
 
 			{% with form = Forms.users.UserSearchForm(field=field, q=q) %}
-			<form method="GET" class="form-inline">
-				<div class="mb4- col-md-2">
-					{{ form.field(class="form-control custom-select w-100") }}
+			<form method="GET" class="d-flex align-items-center gap-2">
+				<div class="mb-4 col-md-2">
+					{{ form.field(class="form-control form-select w-100") }}
 				</div>
-				<div class="mb4- col-md-8">
+				<div class="mb-4 col-md-8">
 					{{ form.q(class="form-control w-100", placeholder="Search for matching users") }}
 				</div>
-				<div class="mb4- col-md-2">
+				<div class="mb-4 col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
 						<i class="fas fa-search" aria-hidden="true"></i>
 					</button>
@@ -97,15 +97,15 @@
 								{{ user.name | truncate(32) }}
 							</a>
 							{% if user.bracket_id %}
-								<span class="badge badge-secondary">{{ user.bracket.name }}</span>
+								<span class="badge bg-secondary">{{ user.bracket.name }}</span>
 							{% endif %}
 							{% if user.oauth_id %}
 								<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-									<span class="badge badge-primary">Official</span>
+									<span class="badge bg-primary">Official</span>
 								</a>
 							{% endif %}
 							{% if user.website %}
-								<a href="{{ user.website }}" target="_blank" class="badge badge-info" rel="noopener">
+								<a href="{{ user.website }}" target="_blank" class="badge bg-info" rel="noopener">
 									<i class="btn-fa fas fa-external-link-alt" data-bs-toggle="tooltip" data-placement="top"
 									   title="{{ user.website }}" aria-hidden="true"></i>
 								</a>
@@ -129,7 +129,7 @@
 						</td>
 						<td class="team-admin d-md-table-cell d-lg-table-cell text-center" value="{{ user.type }}">
 							{% if user.type == 'admin' %}
-								<span class="badge badge-primary">admin</span>
+								<span class="badge bg-primary">admin</span>
 							{% endif %}
 						</td>
 						<td class="team-verified d-md-table-cell d-lg-table-cell text-center" value="{{ user.verified }}">
@@ -170,10 +170,74 @@
 		</div>
 	</div>
 </div>
+
+<div
+  class="modal fade"
+  id="bulkEditModal"
+  tabindex="-1"
+  aria-labelledby="bulkEditModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="users-bulk-edit-form">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bulkEditModalLabel">Edit Users</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="verified">Verified</label>
+            <select class="form-select" name="verified">
+              <option value="">--</option>
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="banned">Banned</label>
+            <select class="form-select" name="banned">
+              <option value="">--</option>
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="hidden">Hidden</label>
+            <select class="form-select" name="hidden">
+              <option value="">--</option>
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 {% endblock %}
+
 
 {% block entrypoint %}
 	{{ Assets.js("assets/js/pages/users.js", theme="admin") }}

@@ -1,1 +1,0 @@
-import{$ as e,q as s}from"./main--AmmKLiY.js";function r(t){t.preventDefault(),s({title:"Reset CTF?",body:"Are you sure you want to reset your CTFd instance?",success:function(){e("#reset-ctf-form").off("submit").submit()}})}e(()=>{e("#reset-ctf-form").submit(r)});

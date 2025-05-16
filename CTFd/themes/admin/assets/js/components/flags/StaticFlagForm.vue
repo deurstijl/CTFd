@@ -1,7 +1,7 @@
 <!-- components/flags/StaticFlagForm.vue -->
 <template>
   <div>
-    <div class="form-group">
+    <div class="mb-4">
       <label for="static-flag">Flag</label>
       <input
         v-model="flag"
@@ -12,7 +12,7 @@
         required
       />
     </div>
-    <div class="form-group">
+    <div class="mb-4">
       <label for="static-data">Data (optional)</label>
       <input
         v-model="data"
@@ -22,7 +22,7 @@
         name="data"
       />
     </div>
-    <button class="btn btn-success float-right" @click="submit">
+    <button class="btn btn-success float-end" @click="submit">
       Create Flag
     </button>
   </div>

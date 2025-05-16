@@ -177,7 +177,7 @@ export default () => {
 
   // Prevent row click propagation for inner links/buttons
   document.querySelectorAll("tr[data-href] a, tr[data-href] button").forEach((el) => {
-    if (!el.hasAttribute("data-dismiss")) {
+    if (!el.hasAttribute("data-bs-dismiss")) {
       el.addEventListener("click", (e) => e.stopPropagation());
     }
   });

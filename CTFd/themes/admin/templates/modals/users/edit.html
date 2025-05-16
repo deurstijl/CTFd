@@ -1,40 +1,40 @@
 {% with form = Forms.users.UserEditForm(obj=user) %}
 {% from "admin/macros/forms.html" import render_extra_fields %}
 <form id="user-info-edit-form">
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.name.label }}
 		{{ form.name(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.email.label }}
 		{{ form.email(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.language.label }}
-		{{ form.language(class="form-control custom-select", autocomplete="off") }}
+		{{ form.language(class="form-control form-select", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.password.label }}
 		{{ form.password(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.website.label }}
 		{{ form.website(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.affiliation.label }}
 		{{ form.affiliation(class="form-control", autocomplete="off") }}
 	</div>
-	<div class="mb4-">
+	<div class="mb-4">
 		{{ form.country.label }}
-		{{ form.country(class="form-control custom-select", autocomplete="off") }}
+		{{ form.country(class="form-control form-select", autocomplete="off") }}
 	</div>
 
 	{{ render_extra_fields(form.extra) }}
 
-	<div class="mb4-">
+	<div class="mb-4">
 		<div class="form-check form-check-inline">
-			{{ form.type(class="form-control form-inline custom-select", id="type-select") }}
+			{{ form.type(class="form-control d-flex align-items-center gap-2 form-select", id="type-select") }}
 		</div>
 		<div class="form-check form-check-inline">
 			{{ form.verified(class="form-check-input", autocomplete="off") }}

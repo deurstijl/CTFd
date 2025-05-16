@@ -3,7 +3,7 @@
     <div>
       <button
         type="button"
-        class="close float-right"
+        class="close float-end"
         aria-label="Close"
         @click="deleteBracket()"
       >
@@ -13,7 +13,7 @@
 
     <div class="row">
       <div class="col-md-9">
-        <div class="form-group">
+        <div class="mb-4">
           <label>Bracket Name</label>
           <input type="text" class="form-control" v-model.lazy="bracket.name" />
           <small class="form-text text-muted">
@@ -23,7 +23,7 @@
       </div>
 
       <div class="col-md-12">
-        <div class="form-group">
+        <div class="mb-4">
           <label>Bracket Description</label>
           <input
             type="text"
@@ -36,7 +36,7 @@
 
       <div class="col-md-12">
         <label>Bracket Type</label>
-        <select class="custom-select" v-model.lazy="bracket.type">
+        <select class="form-select" v-model.lazy="bracket.type">
           <option></option>
           <option value="users">Users</option>
           <option value="teams">Teams</option>
@@ -52,7 +52,7 @@
       <div class="col-md-12">
         <div class="d-block">
           <button
-            class="btn btn-sm btn-success btn-outlined float-right"
+            class="btn btn-sm btn-success btn-outlined float-end"
             type="button"
             @click="saveBracket()"
           >

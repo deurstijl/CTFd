@@ -1,33 +1,42 @@
 <template>
-  <div class="modal fade" tabindex="-1">
+  <div
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    :class="{ show: visible }"
+    :style="{ display: visible ? 'block' : 'none' }"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header text-center">
           <div class="container">
             <div class="row">
               <div class="col-md-12">
-                <h3>Hint</h3>
+                <h3>Create Hint</h3>
               </div>
             </div>
           </div>
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
+            @click="$emit('close')"
             aria-label="Close"
           >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+
         <form method="POST" @submit.prevent="submitHint">
           <div class="modal-body">
             <div class="container">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="form-group">
+
+                  <div class="mb-4">
                     <label>
                       Title<br />
-                      <small>Content displayed before hint unlocking</small>
+                      <small>Content shown before unlocking</small>
                     </label>
                     <input
                       type="text"
@@ -37,40 +46,36 @@
                     />
                   </div>
 
-                  <div class="form-group">
+                  <div class="mb-4">
                     <label>
                       Hint<br />
-                      <small>Markdown &amp; HTML are supported</small>
+                      <small>Markdown & HTML supported</small>
                     </label>
                     <textarea
                       type="text"
-                      class="form-control markdown"
+                      class="form-control"
                       name="content"
                       rows="7"
                       ref="content"
                     ></textarea>
                   </div>
 
-                  <div class="form-group">
+                  <div class="mb-4">
                     <label>
                       Cost<br />
-                      <small>How many points it costs to see your hint.</small>
+                      <small>Points required to view</small>
                     </label>
                     <input
                       type="number"
                       class="form-control"
-                      name="cost"
                       v-model.lazy="cost"
                     />
                   </div>
 
-                  <div class="form-group">
+                  <div class="mb-4">
                     <label>
                       Requirements<br />
-                      <small
-                        >Hints that must be unlocked before unlocking this
-                        hint</small
-                      >
+                      <small>Hints that must be unlocked before this one</small>
                     </label>
                     <div
                       class="form-check"
@@ -88,57 +93,64 @@
                       </label>
                     </div>
                   </div>
-                  <input type="hidden" id="hint-id-for-hint" name="id" />
+
                 </div>
               </div>
             </div>
           </div>
+
           <div class="modal-footer">
             <div class="container">
               <div class="row">
                 <div class="col-md-12">
-                  <button class="btn btn-primary float-right">Submit</button>
+                  <button class="btn btn-primary float-end">Submit</button>
                 </div>
               </div>
             </div>
           </div>
         </form>
+
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import CTFd from "../../compat/CTFd";
+import { bindMarkdownEditor } from "../../styles";
+
 export default {
   name: "HintCreationForm",
   props: {
     challenge_id: Number,
     hints: Array,
+    visible: Boolean,
   },
-  data: function () {
+  data() {
     return {
       cost: 0,
       selectedHints: [],
     };
   },
   methods: {
-    getCost: function () {
+    getCost() {
       return this.cost || 0;
     },
-    getContent: function () {
+    getContent() {
       return this.$refs.content.value;
     },
-    getTitle: function () {
+    getTitle() {
       return this.$refs.title.value;
     },
-    submitHint: function () {
-      let params = {
-        challenge_id: this.$props.challenge_id,
+    submitHint() {
+      const params = {
+        challenge_id: this.challenge_id,
         content: this.getContent(),
         cost: this.getCost(),
         title: this.getTitle(),
         requirements: { prerequisites: this.selectedHints },
       };
+
       CTFd.fetch("/api/v1/hints", {
         method: "POST",
         credentials: "same-origin",
@@ -148,17 +160,46 @@ export default {
         },
         body: JSON.stringify(params),
       })
-        .then((response) => {
-          return response.json();
-        })
+        .then((response) => response.json())
         .then((response) => {
           if (response.success) {
             this.$emit("refreshHints", this.$options.name);
+            this.$emit("close");
+            this.resetForm();
+          } else {
+            alert("Error creating hint.");
           }
+        })
+        .catch((err) => {
+          console.error("Creation failed:", err);
+          alert("Unexpected error: " + err.message);
         });
+    },
+    resetForm() {
+      this.cost = 0;
+      this.selectedHints = [];
+      if (this.$refs.title) this.$refs.title.value = "";
+      if (this.$refs.content) this.$refs.content.value = "";
+    },
+  },
+  watch: {
+    visible(newVal) {
+      if (newVal) {
+        // Optional: bind markdown editor here
+        this.$nextTick(() => bindMarkdownEditor(this.$refs.content));
+        this.resetForm();
+      }
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modal.show {
+  opacity: 1;
+  display: block !important;
+}
+</style>

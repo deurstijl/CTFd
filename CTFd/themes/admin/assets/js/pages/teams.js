@@ -38,7 +38,7 @@ function bulkEditTeams(_event) {
     title: "Edit Teams",
     body: $(`
     <form id="teams-bulk-edit">
-      <div class="form-group">
+      <div class="mb-4">
         <label>Banned</label>
         <select name="banned" data-initial="">
           <option value="">--</option>
@@ -46,7 +46,7 @@ function bulkEditTeams(_event) {
           <option value="false">False</option>
         </select>
       </div>
-      <div class="form-group">
+      <div class="mb-4">
         <label>Hidden</label>
         <select name="hidden" data-initial="">
           <option value="">--</option>

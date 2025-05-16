@@ -11,7 +11,7 @@
             v-model.lazy="comment"
           ></textarea>
           <button
-            class="btn btn-sm btn-success btn-outlined float-right"
+            class="btn btn-sm btn-success btn-outlined float-end"
             type="submit"
             @click="submitComment()"
           >
@@ -58,10 +58,10 @@
           v-for="comment in comments"
           :key="comment.id"
         >
-          <div class="card-body pl-0 pb-0 pt-2 pr-2">
+          <div class="card-body ps-0 pb-0 pt-2 pe-2">
             <button
               type="button"
-              class="close float-right"
+              class="close float-end"
               aria-label="Close"
               @click="deleteComment(comment.id)"
             >
@@ -70,15 +70,15 @@
           </div>
           <div class="card-body">
             <div class="card-text" v-html="comment.html"></div>
-            <small class="text-muted float-left">
+            <small class="text-muted float-start">
               <span>
                 <a :href="`${urlRoot}/admin/users/${comment.author_id}`">{{
                   comment.author.name
                 }}</a>
               </span>
             </small>
-            <small class="text-muted float-right">
-              <span class="float-right">{{ toLocalTime(comment.date) }}</span>
+            <small class="text-muted float-end">
+              <span class="float-end">{{ toLocalTime(comment.date) }}</span>
             </small>
           </div>
         </div>

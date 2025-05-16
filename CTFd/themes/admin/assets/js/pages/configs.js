@@ -496,7 +496,7 @@ $(() => {
         `<style id="theme-color">\n` +
         `:root {--theme-color: ${hex_code};}\n` +
         `.navbar{background-color: var(--theme-color) !important;}\n` +
-        `.jumbotron{background-color: var(--theme-color) !important;}\n` +
+        `.container-fluid bg-light p-5 text-center mb-4{background-color: var(--theme-color) !important;}\n` +
         `</style>\n`;
     }
     theme_header_editor.getDoc().setValue(new_css);

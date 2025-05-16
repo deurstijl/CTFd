@@ -9,7 +9,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Edit Team</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -25,7 +25,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Add Team Members</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -40,14 +40,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Team Invite</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body clearfix">
 				{% with form = Forms.teams.TeamInviteForm() %}
 				<form method="POST">
-					<div class="mb4-">
+					<div class="mb-4">
 						<b>{{ form.link.label }}</b>
 						<div class="input-group mb-3">
 							{{ form.link(id="team-invite-link", class="form-control") }}
@@ -73,7 +73,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Team Statistics</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -89,7 +89,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Choose Captain</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -105,14 +105,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">Award Team Member</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body clearfix">
-				<div class="mb4-">
+				<div class="mb-4">
 					<label for="award-member-input">Member</label>
-					<select class="form-control custom-select" id="award-member-input">
+					<select class="form-control form-select" id="award-member-input">
 						<option value=""> -- </option>
 						{% for member in members %}
 						<option value="{{ member.id }}">{{ member.name }}</option>
@@ -126,7 +126,7 @@
 </div>
 
 <template id="team-member-select">
-	<select class="form-control custom-select">
+	<select class="form-control form-select">
 		<option value=""> -- </option>
 		{% for member in members %}
 		<option value="{{ member.id }}">{{ member.name }}</option>
@@ -139,7 +139,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h2 class="modal-action text-center w-100">IP Addresses</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -167,19 +167,19 @@
 
 		{% if team.oauth_id %}
 			<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-				<h3><span class="badge badge-primary">Official</span></h3>
+				<h3><span class="badge bg-primary">Official</span></h3>
 			</a>
 		{% endif %}
 
 		{% if team.affiliation %}
 			<h3 class="d-inline-block">
-				<span class="badge badge-primary">{{ team.affiliation }}</span>
+				<span class="badge bg-primary">{{ team.affiliation }}</span>
 			</h3>
 		{% endif %}
 
 		{% if team.country %}
 			<h3 class="d-inline-block">
-				<span class="badge badge-primary">
+				<span class="badge bg-primary">
 					<i class="flag-{{ team.country.lower() }}"></i>
 					{{ lookup_country_code(team.country) }}
 				</span>
@@ -188,7 +188,7 @@
 
 		{% if team.bracket_id %}
 			<h2>
-				<span class="badge badge-secondary">
+				<span class="badge bg-secondary">
 					{{ team.bracket.name }}
 				</span>
 			</h2>
@@ -276,13 +276,13 @@
 					<tr>
 						<td class="text-center" data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 							{% if team.captain_id == member.id %}
-								<span class="badge badge-primary">Captain</span>
+								<span class="badge bg-primary">Captain</span>
 							{% endif %}
 							{% if member.bracket_id %}
-								<span class="badge badge-secondary">{{ member.bracket.name }}</span>
+								<span class="badge bg-secondary">{{ member.bracket.name }}</span>
 							{% endif %}
 						</td>
-						<td class="text-left" data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
+						<td class="text-start" data-href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 							<a href="{{ url_for('admin.users_detail', user_id=member.id) }}">
 								{{ member.name }}
 							</a>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <form @submit.prevent="updateNext">
-      <div class="form-group">
+      <div class="mb-4">
         <label>
           Next Challenge
           <br />
@@ -9,7 +9,7 @@
             >Challenge to recommend after solving this challenge</small
           >
         </label>
-        <select class="form-control custom-select" v-model="selected_id">
+        <select class="form-control form-select" v-model="selected_id">
           <option value="null">--</option>
           <option
             v-for="challenge in otherChallenges"
@@ -20,9 +20,9 @@
           </option>
         </select>
       </div>
-      <div class="form-group">
+      <div class="mb-4">
         <button
-          class="btn btn-success float-right"
+          class="btn btn-success float-end"
           :disabled="!updateAvailable"
         >
           Save

@@ -38,15 +38,15 @@ function bulkEditChallenges(_event) {
     title: "Edit Challenges",
     body: $(`
     <form id="challenges-bulk-edit">
-      <div class="form-group">
+      <div class="mb-4">
         <label>Category</label>
         <input type="text" name="category" data-initial="" value="">
       </div>
-      <div class="form-group">
+      <div class="mb-4">
         <label>Value</label>
         <input type="number" name="value" data-initial="" value="">
       </div>
-      <div class="form-group">
+      <div class="mb-4">
         <label>State</label>
         <select name="state" data-initial="">
           <option value="">--</option>

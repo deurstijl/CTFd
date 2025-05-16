@@ -73,7 +73,7 @@ function bulkToggleAccounts(_event) {
     title: "Toggle Visibility",
     body: `
       <form id="scoreboard-bulk-edit">
-  <div class="form-group mb-3">
+  <div class="mb-4 mb-3">
     <label for="visibility-select" class="form-label">Visibility</label>
     <select id="visibility-select" name="visibility" class="form-select" required>
       <option value="">--</option>

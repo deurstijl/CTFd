@@ -8,25 +8,25 @@
 		) 
 	%}
 	<form method="POST" autocomplete="off" class="w-100">
-		<div class="mb4-">
+		<div class="mb-4">
 			{{ form.challenge_visibility.label }}
-			{{ form.challenge_visibility(class="form-control custom-select") }}
+			{{ form.challenge_visibility(class="form-control form-select") }}
 			<small class="form-text text-muted">
 				{{ form.challenge_visibility.description }}
 			</small>
 		</div>
 
-		<div class="mb4-">
+		<div class="mb-4">
 			{{ form.account_visibility.label }}
-			{{ form.account_visibility(class="form-control custom-select") }}
+			{{ form.account_visibility(class="form-control form-select") }}
 			<small class="form-text text-muted">
 				{{ form.account_visibility.description }}
 			</small>
 		</div>
 
-		<div class="mb4-">
+		<div class="mb-4">
 			{{ form.score_visibility.label }}
-			{{ form.score_visibility(class="form-control custom-select") }}
+			{{ form.score_visibility(class="form-control form-select") }}
 			<small class="form-text text-muted">
 				{{ form.score_visibility.description }}
 			</small>
@@ -37,9 +37,9 @@
 			</small>
 		</div>
 
-		<div class="mb4-">
+		<div class="mb-4">
 			{{ form.registration_visibility.label }}
-			{{ form.registration_visibility(class="form-control custom-select") }}
+			{{ form.registration_visibility(class="form-control form-select") }}
 			<small class="form-text text-muted">
 				{{ form.registration_visibility.description }}
 			</small>
