@@ -15,6 +15,7 @@ import "codemirror/mode/htmlmixed/htmlmixed.js";
 import * as Vue from "vue";
 import FieldList from "../components/configs/fields/FieldList.vue";
 import BracketList from "../components/configs/brackets/BracketList.vue";
+import { Modal } from "bootstrap";
 
 dayjs.extend(advancedFormat);
 dayjs.extend(utc);
@@ -95,70 +96,83 @@ function convertDateToMoment(month, day, year, hour, minute) {
 
 function updateConfigs(event) {
   event.preventDefault();
-  const obj = $(this).serializeJSON();
+
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+  const obj = Object.fromEntries(formData.entries());
   const params = {};
 
-  if (obj.mail_useauth === false) {
-    obj.mail_username = null;
-    obj.mail_password = null;
-  } else {
-    if (obj.mail_username === "") {
-      delete obj.mail_username;
-    }
-    if (obj.mail_password === "") {
-      delete obj.mail_password;
+  // Convert string "true"/"false" to boolean where appropriate
+  for (const key in obj) {
+    const val = obj[key];
+    if (val === "true") {
+      params[key] = true;
+    } else if (val === "false") {
+      params[key] = false;
+    } else {
+      params[key] = val;
     }
   }
 
-  Object.keys(obj).forEach(function (x) {
-    if (obj[x] === "true") {
-      params[x] = true;
-    } else if (obj[x] === "false") {
-      params[x] = false;
-    } else {
-      params[x] = obj[x];
-    }
-  });
+  // Handle auth-related cleanup
+  if (params.mail_useauth === false || params.mail_useauth === "false") {
+    params.mail_username = null;
+    params.mail_password = null;
+  } else {
+    if (params.mail_username === "") delete params.mail_username;
+    if (params.mail_password === "") delete params.mail_password;
+  }
 
-  CTFd.api.patch_config_list({}, params).then(function (_response) {
-    if (_response.success) {
+  // Send PATCH request
+  CTFd.api.patch_config_list({}, params).then((response) => {
+    if (response.success) {
       window.location.reload();
+    } else if (response.errors && response.errors.value) {
+      const errors = response.errors.value.join("\n");
+      alert(`Error:\n${errors}`);
     } else {
-      let errors = _response.errors.value.join("\n");
-      ezAlert({
-        title: "Error!",
-        body: errors,
-        button: "Okay",
-      });
+      alert("An unknown error occurred while updating configs.");
     }
   });
 }
 
+
 function uploadLogo(event) {
   event.preventDefault();
-  let form = event.target;
+
+  const form = event.target;
+
   helpers.files.upload(form, {}, function (response) {
-    const f = response.data[0];
+    if (!response.success || !response.data || response.data.length === 0) {
+      alert("Logo upload failed. No file was returned.");
+      return;
+    }
+
+    const file = response.data[0];
     const params = {
-      value: f.location,
+      value: file.location,
     };
+
     CTFd.fetch("/api/v1/configs/ctf_logo", {
       method: "PATCH",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(params),
     })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (response) {
-        if (response.success) {
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
           window.location.reload();
         } else {
-          ezAlert({
-            title: "Error!",
-            body: "Logo uploading failed!",
-            button: "Okay",
-          });
+          alert("Logo uploading failed.");
         }
+      })
+      .catch((err) => {
+        console.error("Upload error:", err);
+        alert("An unexpected error occurred while uploading the logo.");
       });
   });
 }
@@ -188,200 +202,204 @@ function switchUserMode(event) {
 }
 
 function removeLogo() {
-  ezQuery({
-    title: "Remove logo",
-    body: "Are you sure you'd like to remove the CTF logo?",
-    success: function () {
-      const params = {
-        value: null,
-      };
-      CTFd.api
-        .patch_config({ configKey: "ctf_logo" }, params)
-        .then((_response) => {
-          window.location.reload();
-        });
-    },
+  const confirmed = confirm("Are you sure you'd like to remove the CTF logo?");
+  if (!confirmed) return;
+
+  const params = { value: null };
+
+  CTFd.api.patch_config({ configKey: "ctf_logo" }, params).then((_response) => {
+    window.location.reload();
   });
 }
 
 function smallIconUpload(event) {
   event.preventDefault();
-  let form = event.target;
+
+  const form = event.target;
+
   helpers.files.upload(form, {}, function (response) {
-    const f = response.data[0];
+    if (!response.success || !response.data || response.data.length === 0) {
+      alert("Icon upload failed. No file was returned.");
+      return;
+    }
+
+    const file = response.data[0];
     const params = {
-      value: f.location,
+      value: file.location,
     };
+
     CTFd.fetch("/api/v1/configs/ctf_small_icon", {
       method: "PATCH",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(params),
     })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (response) {
-        if (response.success) {
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
           window.location.reload();
         } else {
-          ezAlert({
-            title: "Error!",
-            body: "Icon uploading failed!",
-            button: "Okay",
-          });
+          alert("Icon upload failed.");
         }
+      })
+      .catch((err) => {
+        console.error("Upload error:", err);
+        alert("An unexpected error occurred during upload.");
       });
   });
 }
 
 function removeSmallIcon() {
-  ezQuery({
-    title: "Remove logo",
-    body: "Are you sure you'd like to remove the small site icon?",
-    success: function () {
-      const params = {
-        value: null,
-      };
-      CTFd.api
-        .patch_config({ configKey: "ctf_small_icon" }, params)
-        .then((_response) => {
-          window.location.reload();
-        });
-    },
+  const confirmed = confirm("Are you sure you'd like to remove the small site iconNOW?");
+  if (!confirmed) return;
+
+  const params = { value: null };
+
+  CTFd.api.patch_config({ configKey: "ctf_small_icon" }, params).then((_response) => {
+    window.location.reload();
   });
 }
 
+
 function importCSV(event) {
   event.preventDefault();
-  let csv_file = document.getElementById("import-csv-file").files[0];
-  let csv_type = document.getElementById("import-csv-type").value;
 
-  let form_data = new FormData();
-  form_data.append("csv_file", csv_file);
-  form_data.append("csv_type", csv_type);
-  form_data.append("nonce", CTFd.config.csrfNonce);
+  const fileInput = document.getElementById("import-csv-file");
+  const csvTypeInput = document.getElementById("import-csv-type");
 
-  let pg = ezProgressBar({
-    width: 0,
-    title: "Upload Progress",
+  const csvFile = fileInput?.files?.[0];
+  const csvType = csvTypeInput?.value;
+
+  if (!csvFile || !csvType) {
+    alert("CSV file and type are required.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("csv_file", csvFile);
+  formData.append("csv_type", csvType);
+  formData.append("nonce", CTFd.config.csrfNonce);
+
+  const modal = helpers.createUploadProgressModal("Upload Progress");
+  const progressBar = modal.querySelector(".progress-bar");
+  modal.show();
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", `${CTFd.config.urlRoot}/admin/import/csv`, true);
+
+  xhr.upload.addEventListener("progress", (e) => {
+    if (e.lengthComputable) {
+      const percent = (e.loaded / e.total) * 100;
+      progressBar.style.width = `${percent.toFixed(1)}%`;
+      progressBar.setAttribute("aria-valuenow", percent.toFixed(1));
+    }
   });
 
-  $.ajax({
-    url: CTFd.config.urlRoot + "/admin/import/csv",
-    type: "POST",
-    data: form_data,
-    processData: false,
-    contentType: false,
-    statusCode: {
-      500: function (resp) {
-        // Normalize errors
-        let errors = JSON.parse(resp.responseText);
-        let errorText = "";
-        errors.forEach((element) => {
-          errorText += `Line ${element[0]}: ${JSON.stringify(element[1])}\n`;
-        });
+  xhr.onload = () => {
+    modal.hide();
 
-        // Show errors
+    if (xhr.status === 200) {
+      setTimeout(() => window.location.reload(), 700);
+    } else if (xhr.status === 500) {
+      try {
+        const errors = JSON.parse(xhr.responseText);
+        const errorText = errors
+          .map((e) => `Line ${e[0]}: ${JSON.stringify(e[1])}`)
+          .join("\n");
         alert(errorText);
+      } catch (err) {
+        console.error("Invalid error response from server:", err);
+        alert("Import failed with unknown error.");
+      }
+    } else {
+      alert(`Unexpected response: ${xhr.statusText}`);
+    }
+  };
 
-        // Hide progress modal if its there
-        pg = ezProgressBar({
-          target: pg,
-          width: 100,
-        });
-        setTimeout(function () {
-          pg.modal("hide");
-        }, 500);
-      },
-    },
-    xhr: function () {
-      let xhr = $.ajaxSettings.xhr();
-      xhr.upload.onprogress = function (e) {
-        if (e.lengthComputable) {
-          let width = (e.loaded / e.total) * 100;
-          pg = ezProgressBar({
-            target: pg,
-            width: width,
-          });
-        }
-      };
-      return xhr;
-    },
-    success: function (_data) {
-      pg = ezProgressBar({
-        target: pg,
-        width: 100,
-      });
-      setTimeout(function () {
-        pg.modal("hide");
-      }, 500);
-      setTimeout(function () {
-        window.location.reload();
-      }, 700);
-    },
-  });
+  xhr.onerror = () => {
+    modal.hide();
+    alert("An error occurred during import.");
+  };
+
+  xhr.send(formData);
 }
 
 function importConfig(event) {
   event.preventDefault();
-  let import_file = document.getElementById("import-file").files[0];
 
-  let form_data = new FormData();
-  form_data.append("backup", import_file);
-  form_data.append("nonce", CTFd.config.csrfNonce);
+  const fileInput = document.getElementById("import-file");
+  const importFile = fileInput?.files?.[0];
 
-  let pg = ezProgressBar({
-    width: 0,
-    title: "Upload Progress",
+  if (!importFile) {
+    alert("Please select a file to import.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("backup", importFile);
+  formData.append("nonce", CTFd.config.csrfNonce);
+
+  const modal = helpers.createUploadProgressModal("Upload Progress");
+  const progressBar = modal.querySelector(".progress-bar");
+
+  modal.show();
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", `${CTFd.config.urlRoot}/admin/import`, true);
+
+  xhr.upload.addEventListener("progress", (e) => {
+    if (e.lengthComputable) {
+      const percent = (e.loaded / e.total) * 100;
+      progressBar.style.width = `${percent.toFixed(1)}%`;
+      progressBar.setAttribute("aria-valuenow", percent.toFixed(1));
+    }
   });
 
-  $.ajax({
-    url: CTFd.config.urlRoot + "/admin/import",
-    type: "POST",
-    data: form_data,
-    processData: false,
-    contentType: false,
-    statusCode: {
-      500: function (resp) {
-        alert(resp.responseText);
-      },
-    },
-    xhr: function () {
-      let xhr = $.ajaxSettings.xhr();
-      xhr.upload.onprogress = function (e) {
-        if (e.lengthComputable) {
-          let width = (e.loaded / e.total) * 100;
-          pg = ezProgressBar({
-            target: pg,
-            width: width,
-          });
-        }
-      };
-      return xhr;
-    },
-    success: function (_data) {
-      pg = ezProgressBar({
-        target: pg,
-        width: 100,
-      });
-      location.href = CTFd.config.urlRoot + "/admin/import";
-    },
-  });
+  xhr.onload = () => {
+    modal.hide();
+
+    if (xhr.status === 200) {
+      window.location.href = `${CTFd.config.urlRoot}/admin/import`;
+    } else if (xhr.status === 500) {
+      alert(xhr.responseText);
+    } else {
+      alert(`Unexpected error: ${xhr.statusText}`);
+    }
+  };
+
+  xhr.onerror = () => {
+    modal.hide();
+    alert("An error occurred during file upload.");
+  };
+
+  xhr.send(formData);
 }
+
 
 function exportConfig(event) {
   event.preventDefault();
-  window.location.href = $(this).attr("href");
+  window.location.href = event.currentTarget.getAttribute("href");
 }
 
+// Insert timezones into a <select>
 function insertTimezones(target) {
-  let current = $("<option>").text(dayjs.tz.guess());
-  $(target).append(current);
-  let tz_names = timezones;
-  for (let i = 0; i < tz_names.length; i++) {
-    let tz = $("<option>").text(tz_names[i]);
-    $(target).append(tz);
+  if (!target) return;
+
+  const guessed = dayjs.tz.guess();
+  const currentOpt = document.createElement("option");
+  currentOpt.textContent = guessed;
+  target.appendChild(currentOpt);
+
+  for (const tz of timezones) {
+    const opt = document.createElement("option");
+    opt.textContent = tz;
+    target.appendChild(opt);
   }
 }
+
 
 $(() => {
   const theme_header_editor = CodeMirror.fromTextArea(
@@ -433,45 +451,63 @@ $(() => {
     });
   });
 
-  $("#theme-settings-modal form").submit(function (e) {
+  // Handle form submit inside the modal
+  document.querySelector("#theme-settings-modal form")?.addEventListener("submit", (e) => {
     e.preventDefault();
-    theme_settings_editor
-      .getDoc()
-      .setValue(JSON.stringify($(this).serializeJSON(), null, 2));
-    $("#theme-settings-modal").modal("hide");
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const json = {};
+
+    for (const [key, value] of formData.entries()) {
+      if (json.hasOwnProperty(key)) {
+        if (Array.isArray(json[key])) {
+          json[key].push(value);
+        } else {
+          json[key] = [json[key], value];
+        }
+      } else {
+        json[key] = value;
+      }
+    }
+
+    theme_settings_editor.getDoc().setValue(JSON.stringify(json, null, 2));
+
+    const modalEl = document.getElementById("theme-settings-modal");
+    Modal.getInstance(modalEl)?.hide();
   });
 
-  $("#theme-settings-button").click(function () {
-    let form = $("#theme-settings-modal form");
-    let data;
+  // Handle clicking the settings button to show modal with data
+  document.querySelector("#theme-settings-button")?.addEventListener("click", () => {
+    const form = document.querySelector("#theme-settings-modal form");
+    let data = {};
 
-    // Ignore invalid JSON data
     try {
       data = JSON.parse(theme_settings_editor.getValue());
     } catch (e) {
       data = {};
     }
 
-    $.each(data, function (key, value) {
-      var ctrl = form.find(`[name='${key}']`);
-      switch (ctrl.prop("type")) {
-        case "radio":
-        case "checkbox":
-          ctrl.each(function () {
-            $(this).attr("checked", value);
-            $(this).attr("value", value);
-          });
-          break;
-        default:
-          ctrl.val(value);
-      }
-    });
-    $("#theme-settings-modal").modal();
+    for (const [key, value] of Object.entries(data)) {
+      const input = form.querySelectorAll(`[name="${key}"]`);
+
+      input.forEach((el) => {
+        const type = el.type;
+        if (type === "checkbox" || type === "radio") {
+          el.checked = value === el.value || value === true;
+        } else {
+          el.value = value;
+        }
+      });
+    }
+
+    const modalEl = document.getElementById("theme-settings-modal");
+    Modal.getOrCreateInstance(modalEl).show();
   });
 
-  insertTimezones($("#start-timezone"));
-  insertTimezones($("#end-timezone"));
-  insertTimezones($("#freeze-timezone"));
+  insertTimezones(document.getElementById("start-timezone"));
+  insertTimezones(document.getElementById("end-timezone"));
+  insertTimezones(document.getElementById("freeze-timezone"));
 
   $(".config-section > form:not(.form-upload, .custom-config-form)").submit(
     updateConfigs,
@@ -497,7 +533,9 @@ $(() => {
         `:root {--theme-color: ${hex_code};}\n` +
         `.navbar{background-color: var(--theme-color) !important;}\n` +
         `.container-fluid bg-light p-5 text-center mb-4{background-color: var(--theme-color) !important;}\n` +
-        `</style>\n`;
+        `</style>\n` + 
+        `NOTE that inline styles need to have a nonce value.\n` +
+        `Better use <link rel="stylesheet" href="/files/your.css">` ;
     }
     theme_header_editor.getDoc().setValue(new_css);
   });
@@ -545,16 +583,16 @@ $(() => {
     render: () => Vue.h(FieldList, {
       type: "user"
     })
-  }).mount(vueContainer);
+  }).mount(userVueContainer);
 
   // Insert FieldList element for teams
   let teamVueContainer = document.createElement("div");
   document.querySelector("#team-field-list").appendChild(teamVueContainer);
-  new fieldList({
-    propsData: {
-      type: "team",
-    },
-  }).$mount(teamVueContainer);
+  Vue.createApp({
+    render: () => Vue.h(FieldList, {
+      type: "team"
+    })
+  }).mount(teamVueContainer);
 
   let bracketListContainer = document.createElement("div");
   document.querySelector("#brackets-list").appendChild(bracketListContainer);

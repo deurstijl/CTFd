@@ -106,6 +106,7 @@
 <script>
 import CTFd from "../../compat/CTFd";
 import helpers from "../../compat/helpers";
+import { Modal } from "bootstrap";
 
 function get_page_files() {
   return CTFd.fetch("/api/v1/files?type=page", {
@@ -166,7 +167,7 @@ export default {
 
             // Optionally close modal
             const modalEl = document.getElementById("media-modal");
-            const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
             modal.hide();
           }
         } catch (err) {

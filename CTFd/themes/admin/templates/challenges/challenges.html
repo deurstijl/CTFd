@@ -97,7 +97,7 @@
 							<td class="text-center">{{ challenge.value }}</td>
 							<td class="text-center">{{ challenge.type }}</td>
 							<td class="text-center">
-								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
+								{% set badge_state = 'bg-danger' if challenge.state == 'hidden' else 'bg-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
 						</tr>
@@ -108,6 +108,41 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="challengesBulkEditModal" tabindex="-1">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<form id="challenges-bulk-edit-form">
+		  <div class="modal-header">
+			<h5 class="modal-title">Edit Challenges</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body">
+			<div class="mb-3">
+			  <label>Category</label>
+			  <input type="text" name="category" class="form-control" />
+			</div>
+			<div class="mb-3">
+			  <label>Value</label>
+			  <input type="number" name="value" class="form-control" />
+			</div>
+			<div class="mb-3">
+			  <label>State</label>
+			  <select name="state" class="form-select">
+				<option value="">--</option>
+				<option value="visible">Visible</option>
+				<option value="hidden">Hidden</option>
+			  </select>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="submit" class="btn btn-primary">Submit</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+		  </div>
+		</form>
+	  </div>
+	</div>
+</div>
+  
 {% endblock %}
 
 {% block scripts %}

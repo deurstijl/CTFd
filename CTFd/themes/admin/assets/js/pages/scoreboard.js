@@ -53,8 +53,16 @@ function toggleSelectedAccounts(selectedAccounts, action) {
 }
 
 // Get selected IDs from the active tab and prompt for visibility
-function bulkToggleAccounts(_event) {
+import Modal from "bootstrap/js/dist/modal";
+
+function bulkToggleAccounts(event) {
+  event.preventDefault();
+
   const activeTab = document.querySelector(".tab-pane.active");
+  if (!activeTab) {
+    alert("No active tab found.");
+    return;
+  }
 
   const accountIDs = Array.from(
     activeTab.querySelectorAll('input[data-account-id]:checked')
@@ -69,31 +77,28 @@ function bulkToggleAccounts(_event) {
     users: userIDs,
   };
 
-  ezAlert({
-    title: "Toggle Visibility",
-    body: `
-      <form id="scoreboard-bulk-edit">
-  <div class="mb-4 mb-3">
-    <label for="visibility-select" class="form-label">Visibility</label>
-    <select id="visibility-select" name="visibility" class="form-select" required>
-      <option value="">--</option>
-      <option value="visible">Visible</option>
-      <option value="hidden">Hidden</option>
-    </select>
-  </div>
-</form>
-    `,
-    button: "Submit",
-    success: () => {
-      const form = document.getElementById("scoreboard-bulk-edit");
-      const formData = new FormData(form);
-      const state = formData.get("visibility");
-      if (state) {
-        toggleSelectedAccounts(selectedUsers, state);
-      }
-    },
-  });
+  if (accountIDs.length === 0 && userIDs.length === 0) {
+    alert("Please select at least one user or account.");
+    return;
+  }
+
+  const modalEl = document.getElementById("visibilityToggleModal");
+  const modal = new Modal(modalEl);
+  modal.show();
+
+  const form = document.getElementById("scoreboard-bulk-edit-form");
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const state = form.querySelector("select[name='visibility']").value;
+    if (state) {
+      toggleSelectedAccounts(selectedUsers, state);
+      modal.hide();
+    } else {
+      alert("Please choose a visibility option.");
+    }
+  };
 }
+
 
 // Attach event listeners
 document.addEventListener("DOMContentLoaded", () => {

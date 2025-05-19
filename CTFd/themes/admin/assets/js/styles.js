@@ -100,10 +100,11 @@ export function makeSortableTables() {
 
     th.addEventListener("click", () => {
       const table = th.closest("table");
+      const tbody = table.querySelector("tbody");
       const index = Array.from(th.parentNode.children).indexOf(th);
-      const rows = Array.from(table.querySelectorAll("tr:nth-child(n+2)"));
+      const rows = Array.from(tbody.querySelectorAll("tr"));
       const asc = !th.classList.contains("asc");
-
+    
       rows.sort((a, b) => {
         const valA = a.children[index].innerText.trim();
         const valB = b.children[index].innerText.trim();
@@ -111,11 +112,12 @@ export function makeSortableTables() {
           ? asc ? valA - valB : valB - valA
           : asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
       });
-
+    
       table.querySelectorAll("th").forEach((h) => h.classList.remove("asc", "desc"));
       th.classList.add(asc ? "asc" : "desc");
-
-      rows.forEach((row) => table.appendChild(row));
+    
+      // ✅ Append back to tbody, not table
+      rows.forEach((row) => tbody.appendChild(row));
     });
   });
 }
@@ -126,18 +128,6 @@ export default () => {
   document.querySelectorAll("input, select, textarea").forEach((el) => {
     el.dataset.initial = el.value;
   });
-
-  // // Clickable table rows
-  // document.querySelectorAll("tr[data-href], td[data-href]").forEach((el) => {
-  //   el.addEventListener("click", (e) => {
-  //     if (!window.getSelection().toString()) {
-  //       const href = el.dataset.href;
-  //       if (href) {
-  //         window.location = href;
-  //       }
-  //     }
-  //   });
-  // });
 
   // Clickable table rows (better)
   document.querySelectorAll('tr[data-href], td[data-href]').forEach((el) => {

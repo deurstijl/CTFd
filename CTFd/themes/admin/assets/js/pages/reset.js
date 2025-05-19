@@ -1,18 +1,17 @@
 import "./main";
-import $ from "jquery";
-import { ezQuery } from "../compat/ezq";
 
 function reset(event) {
   event.preventDefault();
-  ezQuery({
-    title: "Reset CTF?",
-    body: "Are you sure you want to reset your CTFd instance?",
-    success: function () {
-      $("#reset-ctf-form").off("submit").submit();
-    },
-  });
+
+  const confirmed = confirm("Are you sure you want to reset your CTFd instance?");
+  if (confirmed) {
+    const form = document.getElementById("reset-ctf-form");
+    form.removeEventListener("submit", reset); // remove this handler
+    form.submit(); // then submit normally
+  }
 }
 
-$(() => {
-  $("#reset-ctf-form").submit(reset);
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("reset-ctf-form");
+  form?.addEventListener("submit", reset);
 });

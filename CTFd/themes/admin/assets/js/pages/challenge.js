@@ -26,9 +26,9 @@ function loadChalTemplate(challenge) {
     .then(() => {
       const templateData = challenge.create;
       const entryDiv = document.querySelector("#create-chal-entry-div");
-      if (!entryDiv) throw new Error("create-chal-entry-div not found");
-      console.log("FRANKDEBUG create-chal-entry-div  found");
-      entryDiv.innerHTML = templateData;
+      if (entryDiv) {
+        entryDiv.innerHTML = templateData;
+      }
 
       if (typeof bindMarkdownEditors === "function") {
         bindMarkdownEditors();
@@ -38,49 +38,44 @@ function loadChalTemplate(challenge) {
     })
     .then(() => {
       const form = document.querySelector("#create-chal-entry-div form");
-      if (!form) throw new Error("Challenge form not found");
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-
-        const formData = new FormData(form);
-        const params = Object.fromEntries(formData.entries());
-
-        try {
-          const response = await CTFd.fetch("/api/v1/challenges", {
-            method: "POST",
-            credentials: "same-origin",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(params),
-          });
-
-          const result = await response.json();
-
-          if (result.success) {
-            const idInput = document.querySelector("#challenge-create-options #challenge_id");
-            if (idInput) idInput.value = result.data.id;
-
-            const modal = document.querySelector("#challenge-create-options");
-            if (modal && typeof bootstrap !== "undefined") {
-              const bsModal = new bootstrap.Modal(modal);
-              bsModal.show();
+      if (form){
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+        
+          const formData = new FormData(form);
+          const params = Object.fromEntries(formData.entries());
+        
+          try {
+            const response = await CTFd.fetch("/api/v1/challenges", {
+              method: "POST",
+              credentials: "same-origin",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(params),
+            });
+        
+            const result = await response.json();
+        
+            if (result.success) {
+              // ✅ Redirect to the new challenge page
+              const challengeId = result.data.id;
+              window.location = `${CTFd.config.urlRoot}/admin/challenges/${challengeId}`;
+            } else {
+              let body = "";
+              for (const key in result.errors) {
+                body += result.errors[key].join("\n") + "\n";
+              }
+        
+              alert(body);
             }
-          } else {
-            let body = "";
-            for (const key in result.errors) {
-              body += result.errors[key].join("\n") + "\n";
-            }
-
-            alert(body)
+          } catch (err) {
+            console.error("Challenge creation failed:", err);
+            alert(err.message);
           }
-        } catch (err) {
-          console.error("Challenge creation failed:", err);
-          alert(err.message)
-        }
-      });
+        });
+      }
     })
     .catch((err) => {
       console.error("Error in loadChalTemplate:", err);
@@ -241,13 +236,13 @@ $(() => {
                 switch (response.data.state) {
                   case "visible":
                     $(".challenge-state")
-                      .removeClass("badge-danger")
-                      .addClass("badge-success");
+                      .removeClass("bg-danger")
+                      .addClass("bg-success");
                     break;
                   case "hidden":
                     $(".challenge-state")
-                      .removeClass("badge-success")
-                      .addClass("badge-danger");
+                      .removeClass("bg-success")
+                      .addClass("bg-danger");
                     break;
                   default:
                     break;

@@ -101,7 +101,6 @@
 
 <script>
 import CTFd from "../../../compat/CTFd";
-import { ezToast } from "../../../compat/ezq";
 
 export default {
   props: {
@@ -137,11 +136,7 @@ export default {
           .then((response) => {
             if (response.success === true) {
               this.field = response.data;
-              ezToast({
-                title: "Success",
-                body: "Field has been updated!",
-                delay: 1000,
-              });
+              alert("Field has been updated!");
             }
           });
       } else {
@@ -160,11 +155,7 @@ export default {
           .then((response) => {
             if (response.success === true) {
               this.field = response.data;
-              ezToast({
-                title: "Success",
-                body: "Field has been created!",
-                delay: 1000,
-              });
+              alert("Field has been created!");
             }
           });
       }

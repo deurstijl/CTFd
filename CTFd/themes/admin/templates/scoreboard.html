@@ -53,6 +53,33 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="visibilityToggleModal" tabindex="-1">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<form id="scoreboard-bulk-edit-form">
+		  <div class="modal-header">
+			<h5 class="modal-title">Toggle Visibility</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body">
+			<div class="mb-3">
+			  <label for="visibility-select" class="form-label">Visibility</label>
+			  <select id="visibility-select" name="visibility" class="form-select" required>
+				<option value="">--</option>
+				<option value="visible">Visible</option>
+				<option value="hidden">Hidden</option>
+			  </select>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="submit" class="btn btn-primary">Submit</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+		  </div>
+		</form>
+	  </div>
+	</div>
+</div>
+  
 {% endblock %}
 
 {% block scripts %}

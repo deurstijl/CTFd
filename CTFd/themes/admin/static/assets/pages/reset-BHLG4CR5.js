@@ -1,0 +1,1 @@
+import"./main-fLwNSudD.js";function n(e){if(e.preventDefault(),confirm("Are you sure you want to reset your CTFd instance?")){const t=document.getElementById("reset-ctf-form");t.removeEventListener("submit",n),t.submit()}}document.addEventListener("DOMContentLoaded",()=>{const e=document.getElementById("reset-ctf-form");e==null||e.addEventListener("submit",n)});

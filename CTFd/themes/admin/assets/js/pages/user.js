@@ -8,10 +8,13 @@ import { ezQuery, ezBadge } from "../compat/ezq";
 import { createGraph, updateGraph } from "../compat/graphs";
 import * as Vue from "vue";
 import CommentBox from "../components/comments/CommentBox.vue";
+import { createApp, h } from "vue"; // Vue 3
+import Modal from "bootstrap/js/dist/modal";
 
 function createUser(event) {
   event.preventDefault();
   const params = $("#user-info-create-form").serializeJSON(true);
+  console.log(params);
 
   params.fields = [];
 
@@ -122,26 +125,30 @@ function updateUser(event) {
 
 function deleteUser(event) {
   event.preventDefault();
-  ezQuery({
-    title: "Delete User",
-    body: "Are you sure you want to delete {0}".format(
-      "<strong>" + htmlEntities(window.USER_NAME) + "</strong>",
-    ),
-    success: function () {
-      CTFd.fetch("/api/v1/users/" + window.USER_ID, {
-        method: "DELETE",
-      })
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (response) {
-          if (response.success) {
-            window.location = CTFd.config.urlRoot + "/admin/users";
-          }
-        });
-    },
-  });
+
+  const userName = window.USER_NAME || "this user";
+  const confirmed = confirm(`Are you sure you want to delete "${userName}"?`);
+
+  if (!confirmed) return;
+
+  CTFd.fetch(`/api/v1/users/${window.USER_ID}`, {
+    method: "DELETE",
+    credentials: "same-origin",
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.success) {
+        window.location = `${CTFd.config.urlRoot}/admin/users`;
+      } else {
+        alert("Failed to delete user.");
+      }
+    })
+    .catch((err) => {
+      console.error("Delete failed:", err);
+      alert("Unexpected error while deleting the user.");
+    });
 }
+
 
 function awardUser(event) {
   event.preventDefault();
@@ -225,147 +232,175 @@ function emailUser(event) {
     });
 }
 
-function correctSubmissions(_event) {
-  let submissions = $("input[data-submission-type=incorrect]:checked");
-  let submissionIDs = submissions.map(function () {
-    return $(this).data("submission-id");
-  });
-  let target = submissionIDs.length === 1 ? "submission" : "submissions";
+function correctSubmissions(event) {
+  event.preventDefault();
 
-  ezQuery({
-    title: "Correct Submissions",
-    body: `Are you sure you want to mark ${submissionIDs.length} ${target} correct?`,
-    success: function () {
-      const reqs = [];
-      for (var subId of submissionIDs) {
-        let req = CTFd.fetch(`/api/v1/submissions/${subId}`, {
-          method: "PATCH",
-          credentials: "same-origin",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ type: "correct" }),
-        });
-        reqs.push(req);
-      }
-      Promise.all(reqs).then((_responses) => {
-        window.location.reload();
-      });
-    },
-  });
+  const checkboxes = document.querySelectorAll("input[data-submission-type='incorrect']:checked");
+  const submissionIDs = Array.from(checkboxes).map(el => el.dataset.submissionId);
+  const label = submissionIDs.length === 1 ? "submission" : "submissions";
+
+  if (submissionIDs.length === 0) {
+    alert("Please select at least one submission to mark as correct.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to mark ${submissionIDs.length} ${label} correct?`);
+  if (!confirmed) return;
+
+  const requests = submissionIDs.map(subId =>
+    CTFd.fetch(`/api/v1/submissions/${subId}`, {
+      method: "PATCH",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ type: "correct" }),
+    })
+  );
+
+  Promise.all(requests)
+    .then(() => {
+      window.location.reload();
+    })
+    .catch(err => {
+      console.error("Failed to correct submissions:", err);
+      alert("An error occurred while updating submissions.");
+    });
 }
 
+
 function deleteSelectedSubmissions(event, target) {
-  let submissions;
-  let type;
-  let title;
+  event.preventDefault();
+
+  let selector, type, title;
   switch (target) {
     case "solves":
-      submissions = $("input[data-submission-type=correct]:checked");
+      selector = 'input[data-submission-type="correct"]:checked';
       type = "solve";
       title = "Solves";
       break;
     case "fails":
-      submissions = $("input[data-submission-type=incorrect]:checked");
+      selector = 'input[data-submission-type="incorrect"]:checked';
       type = "fail";
       title = "Fails";
       break;
     default:
-      break;
+      return;
   }
 
-  let submissionIDs = submissions.map(function () {
-    return $(this).data("submission-id");
-  });
-  let target_string = submissionIDs.length === 1 ? type : type + "s";
+  const checkboxes = document.querySelectorAll(selector);
+  const submissionIDs = Array.from(checkboxes).map((el) => el.dataset.submissionId);
 
-  ezQuery({
-    title: `Delete ${title}`,
-    body: `Are you sure you want to delete ${submissionIDs.length} ${target_string}?`,
-    success: function () {
-      const reqs = [];
-      for (var subId of submissionIDs) {
-        reqs.push(CTFd.api.delete_submission({ submissionId: subId }));
-      }
-      Promise.all(reqs).then((_responses) => {
-        window.location.reload();
-      });
-    },
-  });
+  if (submissionIDs.length === 0) {
+    alert(`Please select at least one ${type} to delete.`);
+    return;
+  }
+
+  const label = submissionIDs.length === 1 ? type : `${type}s`;
+  const confirmed = confirm(`Are you sure you want to delete ${submissionIDs.length} ${label}?`);
+
+  if (!confirmed) return;
+
+  const deleteRequests = submissionIDs.map((subId) =>
+    CTFd.api.delete_submission({ submissionId: subId })
+  );
+
+  Promise.all(deleteRequests)
+    .then(() => {
+      window.location.reload();
+    })
+    .catch((err) => {
+      console.error(`Failed to delete ${label}:`, err);
+      alert(`An error occurred while deleting ${label}.`);
+    });
 }
 
-function deleteSelectedAwards(_event) {
-  let awardIDs = $("input[data-award-id]:checked").map(function () {
-    return $(this).data("award-id");
-  });
-  let target = awardIDs.length === 1 ? "award" : "awards";
 
-  ezQuery({
-    title: `Delete Awards`,
-    body: `Are you sure you want to delete ${awardIDs.length} ${target}?`,
-    success: function () {
-      const reqs = [];
-      for (var awardID of awardIDs) {
-        let req = CTFd.fetch("/api/v1/awards/" + awardID, {
-          method: "DELETE",
-          credentials: "same-origin",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        });
-        reqs.push(req);
-      }
-      Promise.all(reqs).then((_responses) => {
-        window.location.reload();
-      });
-    },
-  });
+function deleteSelectedAwards(event) {
+  event.preventDefault();
+
+  const checkboxes = document.querySelectorAll("input[data-award-id]:checked");
+  const awardIDs = Array.from(checkboxes).map((el) => el.dataset.awardId);
+  const targetLabel = awardIDs.length === 1 ? "award" : "awards";
+
+  if (awardIDs.length === 0) {
+    alert("Please select at least one award to delete.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to delete ${awardIDs.length} ${targetLabel}?`);
+  if (!confirmed) return;
+
+  const deleteRequests = awardIDs.map((awardID) =>
+    CTFd.fetch(`/api/v1/awards/${awardID}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+  );
+
+  Promise.all(deleteRequests)
+    .then(() => {
+      window.location.reload();
+    })
+    .catch((err) => {
+      console.error("Award deletion failed:", err);
+      alert("An error occurred while deleting awards.");
+    });
 }
 
 function solveSelectedMissingChallenges(event) {
   event.preventDefault();
-  let challengeIDs = $("input[data-missing-challenge-id]:checked").map(
-    function () {
-      return $(this).data("missing-challenge-id");
-    },
+
+  const checkboxes = document.querySelectorAll("input[data-missing-challenge-id]:checked");
+  const challengeIDs = Array.from(checkboxes).map(el => el.dataset.missingChallengeId);
+  const target = challengeIDs.length === 1 ? "challenge" : "challenges";
+
+  if (challengeIDs.length === 0) {
+    alert("Please select at least one challenge to mark as solved.");
+    return;
+  }
+
+  const userName = window.USER_NAME || "this user";
+  const confirmed = confirm(
+    `Are you sure you want to mark ${challengeIDs.length} ${target} correct for ${userName}?`
   );
-  let target = challengeIDs.length === 1 ? "challenge" : "challenges";
+  if (!confirmed) return;
 
-  ezQuery({
-    title: `Mark Correct`,
-    body: `Are you sure you want to mark ${
-      challengeIDs.length
-    } ${target} correct for ${htmlEntities(window.USER_NAME)}?`,
-    success: function () {
-      const reqs = [];
-      for (var challengeID of challengeIDs) {
-        let params = {
-          provided: "MARKED AS SOLVED BY ADMIN",
-          user_id: window.USER_ID,
-          team_id: window.TEAM_ID,
-          challenge_id: challengeID,
-          type: "correct",
-        };
+  const requests = challengeIDs.map(challengeID => {
+    const params = {
+      provided: "MARKED AS SOLVED BY ADMIN",
+      user_id: window.USER_ID,
+      team_id: window.TEAM_ID,
+      challenge_id: challengeID,
+      type: "correct",
+    };
 
-        let req = CTFd.fetch("/api/v1/submissions", {
-          method: "POST",
-          credentials: "same-origin",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(params),
-        });
-        reqs.push(req);
-      }
-      Promise.all(reqs).then((_responses) => {
-        window.location.reload();
-      });
-    },
+    return CTFd.fetch("/api/v1/submissions", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(params),
+    });
   });
+
+  Promise.all(requests)
+    .then(() => {
+      window.location.reload();
+    })
+    .catch(err => {
+      console.error("Failed to mark challenges as solved:", err);
+      alert("An error occurred while marking challenges as solved.");
+    });
 }
+
 
 const api_funcs = {
   team: [
@@ -456,77 +491,94 @@ const updateGraphs = (type, id, name, account_id) => {
   });
 };
 
-$(() => {
-  $(".delete-user").click(deleteUser);
+document.addEventListener("DOMContentLoaded", () => {
+  // Helper: toggle a modal by ID
+  function toggleModal(id) {
+    const modalElement = document.getElementById(id);
+    if (modalElement) {
+      const modal = new Modal(modalElement);
+      modal.toggle();
+    }
+  }
 
-  $(".edit-user").click(function (_event) {
-    $("#user-info-modal").modal("toggle");
-  });
+  // Button actions
+  document.querySelectorAll(".delete-user").forEach(el =>
+    el.addEventListener("click", deleteUser)
+  );
 
-  $(".award-user").click(function (_event) {
-    $("#user-award-modal").modal("toggle");
-  });
+  document.querySelectorAll(".edit-user").forEach(el =>
+    el.addEventListener("click", () => toggleModal("user-info-modal"))
+  );
 
-  $(".email-user").click(function (_event) {
-    $("#user-email-modal").modal("toggle");
-  });
+  document.querySelectorAll(".award-user").forEach(el =>
+    el.addEventListener("click", () => toggleModal("user-award-modal"))
+  );
 
-  $(".addresses-user").click(function (_event) {
-    $("#user-addresses-modal").modal("toggle");
-  });
+  document.querySelectorAll(".email-user").forEach(el =>
+    el.addEventListener("click", () => toggleModal("user-email-modal"))
+  );
 
-  $("#user-mail-form").submit(emailUser);
+  document.querySelectorAll(".addresses-user").forEach(el =>
+    el.addEventListener("click", () => toggleModal("user-addresses-modal"))
+  );
 
-  $("#solves-delete-button").click(function (e) {
+  document.getElementById("user-mail-form")?.addEventListener("submit", emailUser);
+  document.getElementById("solves-delete-button")?.addEventListener("click", (e) => {
     deleteSelectedSubmissions(e, "solves");
   });
 
-  $("#correct-fail-button").click(correctSubmissions);
+  document.getElementById("correct-fail-button")?.addEventListener("click", correctSubmissions);
 
-  $("#fails-delete-button").click(function (e) {
+  document.getElementById("fails-delete-button")?.addEventListener("click", (e) => {
     deleteSelectedSubmissions(e, "fails");
   });
 
-  $("#awards-delete-button").click(function (e) {
+  document.getElementById("awards-delete-button")?.addEventListener("click", (e) => {
     deleteSelectedAwards(e);
   });
 
-  $("#missing-solve-button").click(function (e) {
+  document.getElementById("missing-solve-button")?.addEventListener("click", (e) => {
     solveSelectedMissingChallenges(e);
   });
 
-  $("#user-info-create-form").submit(createUser);
+  document.getElementById("user-info-create-form")?.addEventListener("submit", createUser);
+  document.getElementById("user-info-edit-form")?.addEventListener("submit", updateUser);
+  document.getElementById("user-award-form")?.addEventListener("submit", awardUser);
 
-  $("#user-info-edit-form").submit(updateUser);
-  $("#user-award-form").submit(awardUser);
+  // Mount Vue CommentBox
+  const commentBoxTarget = document.getElementById("comment-box");
+  if (commentBoxTarget) {
+    const vueContainer = document.createElement("div");
+    commentBoxTarget.appendChild(vueContainer);
 
-  // Insert CommentBox element
-  
-  let vueContainer = document.createElement("div");
-  document.querySelector("#comment-box").appendChild(vueContainer);
-  Vue.createApp({
-    render: () => Vue.h(CommentBox, {
-      type: "user",
-      id: window.USER_ID
-    })
-  }).mount(vueContainer);
-  
-  let type, id, name, account_id;
-  ({ type, id, name, account_id } = window.stats_data);
+    createApp({
+      render: () => h(CommentBox, {
+        type: "user",
+        id: window.USER_ID
+      })
+    }).mount(vueContainer);
+  }
 
+  // Stats modal logic
+  let { type, id, name, account_id } = window.stats_data || {};
   let intervalId;
-  $("#user-statistics-modal").on("shown.bs.modal", function (_e) {
-    createGraphs(type, id, name, account_id);
-    intervalId = setInterval(() => {
-      updateGraphs(type, id, name, account_id);
-    }, 300000);
-  });
 
-  $("#user-statistics-modal").on("hidden.bs.modal", function (_e) {
-    clearInterval(intervalId);
-  });
+  const statsModal = document.getElementById("user-statistics-modal");
 
-  $(".statistics-user").click(function (_event) {
-    $("#user-statistics-modal").modal("toggle");
-  });
+  if (statsModal) {
+    statsModal.addEventListener("shown.bs.modal", () => {
+      createGraphs(type, id, name, account_id);
+      intervalId = setInterval(() => {
+        updateGraphs(type, id, name, account_id);
+      }, 300000); // 5 minutes
+    });
+
+    statsModal.addEventListener("hidden.bs.modal", () => {
+      clearInterval(intervalId);
+    });
+
+    document.querySelectorAll(".statistics-user").forEach(el =>
+      el.addEventListener("click", () => toggleModal("user-statistics-modal"))
+    );
+  }
 });
