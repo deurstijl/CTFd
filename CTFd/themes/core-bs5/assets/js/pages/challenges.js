@@ -1,13 +1,14 @@
+// bootstrap5-challenges.js
 import "./main";
 import "bootstrap/js/dist/tab";
-import { ezQuery, ezAlert } from "../ezq";
+import { Tooltip, Modal, Tab } from "bootstrap";
 import { htmlEntities } from "../utils";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import $ from "jquery";
+import hljs from "highlight.js";
 import CTFd from "../CTFd";
 import config from "../config";
-import hljs from "highlight.js";
+import runStyles from "../styles";
 
 dayjs.extend(relativeTime);
 
@@ -15,344 +16,347 @@ CTFd._internal.challenge = {};
 let challenges = [];
 let solves = [];
 
-const loadChal = id => {
-  const chal = $.grep(challenges, chal => chal.id == id)[0];
+const loadChal = (id) => {
+  const chal = challenges.find((c) => c.id == id);
 
-  if (chal.type === "hidden") {
-    ezAlert({
-      title: "Challenge Hidden!",
-      body: "You haven't unlocked this challenge yet!",
-      button: "Got it!"
-    });
+  if (chal?.type === "hidden") {
+    alert("You haven't unlocked this challenge yet!");
     return;
   }
 
   displayChal(chal);
 };
 
-const loadChalByName = name => {
-  let idx = name.lastIndexOf("-");
-  let pieces = [name.slice(0, idx), name.slice(idx + 1)];
-  let id = pieces[1];
-
-  const chal = $.grep(challenges, chal => chal.id == id)[0];
+const loadChalByName = (name) => {
+  const idx = name.lastIndexOf("-");
+  const id = name.slice(idx + 1);
+  const chal = challenges.find((c) => c.id == id);
   displayChal(chal);
 };
 
-const displayChal = chal => {
-  return Promise.all([
+const displayChal = async (chal) => {
+  const challengeWindow = document.getElementById("challenge-window");
+
+  const [chalData, templateHTML] = await Promise.all([
     CTFd.api.get_challenge({ challengeId: chal.id }),
-    $.getScript(config.urlRoot + chal.script),
-    $.get(config.urlRoot + chal.template)
-  ]).then(responses => {
-    const challenge = CTFd._internal.challenge;
+    fetch(config.urlRoot + chal.template).then((res) => res.text()),
+  ]);
 
-    $("#challenge-window").empty();
+  // Dynamic import of challenge script as ES module
+  const chalModule = await import(/* @vite-ignore */ `${config.urlRoot + chal.script}`);
+  const challenge = CTFd._internal.challenge;
 
-    // Inject challenge data into the plugin
-    challenge.data = responses[0].data;
+  // Inject challenge data into the plugin
+  challenge.data = chalData.data;
 
-    // Call preRender function in plugin
-    challenge.preRender();
+  // Call preRender if exported
+  if (chalModule?.preRender) chalModule.preRender();
 
-    // Build HTML from the Jinja response in API
-    $("#challenge-window").append(responses[0].data.view);
+  // Insert challenge HTML
+  challengeWindow.innerHTML = chalData.data.view;
 
-    $("#challenge-window #challenge-input").addClass("form-control");
-    $("#challenge-window #challenge-submit").addClass(
-      "btn btn-md btn-outline-secondary float-right"
-    );
 
-    let modal = $("#challenge-window").find(".modal-dialog");
-    if (
-      window.init.theme_settings &&
-      window.init.theme_settings.challenge_window_size
-    ) {
-      switch (window.init.theme_settings.challenge_window_size) {
-        case "sm":
-          modal.addClass("modal-sm");
-          break;
-        case "lg":
-          modal.addClass("modal-lg");
-          break;
-        case "xl":
-          modal.addClass("modal-xl");
-          break;
-        default:
-          break;
-      }
-    }
+  // Style input and button
+  document.getElementById("challenge-input")?.classList.add("form-control");
+  document.getElementById("challenge-submit")?.classList.add(
+    "btn",
+    "btn-md",
+    "btn-outline-secondary",
+    "float-end"
+  );
 
-    $(".challenge-solves").click(function(_event) {
-      getSolves($("#challenge-id").val());
-    });
-    $(".nav-tabs a").click(function(event) {
-      event.preventDefault();
-      $(this).tab("show");
-    });
+  // Handle modal sizing
+  const modalDialog = challengeWindow.querySelector(".modal-dialog");
+  const size = window.init?.theme_settings?.challenge_window_size;
+  if (modalDialog && ["sm", "lg", "xl"].includes(size)) {
+    modalDialog.classList.add(`modal-${size}`);
+  }
 
-    // Handle modal toggling
-    $("#challenge-window").on("hide.bs.modal", function(_event) {
-      $("#challenge-input").removeClass("wrong");
-      $("#challenge-input").removeClass("correct");
-      $("#incorrect-key").slideUp();
-      $("#correct-key").slideUp();
-      $("#already-solved").slideUp();
-      $("#too-fast").slideUp();
-    });
-
-    $(".load-hint").on("click", function(_event) {
-      loadHint($(this).data("hint-id"));
-    });
-
-    $("#challenge-submit").click(function(event) {
-      event.preventDefault();
-      $("#challenge-submit").addClass("disabled-button");
-      $("#challenge-submit").prop("disabled", true);
-      CTFd._internal.challenge
-        .submit()
-        .then(renderSubmissionResponse)
-        .then(loadChals)
-        .then(markSolves);
-    });
-
-    $("#challenge-input").keyup(event => {
-      if (event.keyCode == 13) {
-        $("#challenge-submit").click();
-      }
-    });
-
-    challenge.postRender();
-
-    $("#challenge-window")
-      .find("pre code")
-      .each(function(_idx) {
-        hljs.highlightBlock(this);
-      });
-
-    window.location.replace(
-      window.location.href.split("#")[0] + `#${chal.name}-${chal.id}`
-    );
-    $("#challenge-window").modal();
+  // Challenge solves
+  challengeWindow.querySelectorAll(".challenge-solves").forEach((el) => {
+    el.addEventListener("click", () => getSolves(chal.id));
   });
+
+  // Bootstrap 5 modal
+  requestAnimationFrame(() => {
+    new Modal(challengeWindow).show();
+  });
+
+  // Enable tooltips
+  challengeWindow.querySelectorAll("[data-bs-toggle='tooltip']").forEach((el) => {
+    new Tooltip(el);
+  });
+
+  // Enable tab behavior
+  challengeWindow.querySelectorAll(".nav-tabs a").forEach((tab) => {
+    tab.addEventListener("click", (e) => {
+      e.preventDefault();
+      new Tab(tab).show();
+    });
+  });
+
+  // Submission handling
+  challengeWindow.querySelector("#challenge-submit")?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const btn = e.target;
+    btn.disabled = true;
+
+    try {
+      const result = await challenge.submit();
+      renderSubmissionResponse(result);
+      await loadChals();
+      markSolves();
+    } catch (err) {
+      console.error("Submission error", err);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Enter key triggers submission
+  challengeWindow.querySelector("#challenge-input")?.addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+      document.getElementById("challenge-submit")?.click();
+    }
+  });
+
+  // Hint loading
+  challengeWindow.querySelectorAll(".load-hint").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      loadHint(el.dataset.hintId);
+    });
+  });
+
+  // Call postRender
+  if (chalModule?.postRender) chalModule.postRender();
+
+  // Syntax highlighting
+  challengeWindow.querySelectorAll("pre code").forEach((block) => {
+    hljs.highlightElement(block);
+  });
+
+  // Update URL fragment
+  history.replaceState(null, "", `#${chal.name}-${chal.id}`);
+
+  // Make sure the notificatiowrapper is not shown.
+  document.getElementById("notification-wrapper").classList.add("d-none");
 };
 
 function renderSubmissionResponse(response) {
   const result = response.data;
+  const message = document.getElementById("result-message");
+  const alertBox = document.getElementById("result-notification");
+  const input = document.getElementById("challenge-input");
 
-  const result_message = $("#result-message");
-  const result_notification = $("#result-notification");
-  const answer_input = $("#challenge-input");
-  result_notification.removeClass();
-  result_message.text(result.message);
+  alertBox.className = "alert alert-dismissible text-center w-100 show";
+  message.textContent = result.message;
 
-  const next_btn = $(
-    `<div class='col-md-12 pb-3'><button class='btn btn-info w-100'>Next Challenge</button></div>`
-  ).click(function() {
-    $("#challenge-window").modal("toggle");
-    setTimeout(function() {
-      loadChal(CTFd._internal.challenge.data.next_id);
-    }, 500);
+  const nextBtn = document.createElement("div");
+  nextBtn.className = "col-md-12 pb-3";
+  nextBtn.innerHTML = `<button class='btn btn-info w-100'>Next Challenge</button>`;
+  nextBtn.querySelector("button").addEventListener("click", () => {
+    Modal.getInstance(document.getElementById("challenge-window")).hide();
+    setTimeout(() => loadChal(CTFd._internal.challenge.data.next_id), 500);
   });
 
   if (result.status === "authentication_required") {
-    window.location =
-      CTFd.config.urlRoot +
-      "/login?next=" +
-      CTFd.config.urlRoot +
-      window.location.pathname +
-      window.location.hash;
+    window.location = `${CTFd.config.urlRoot}/login?next=${CTFd.config.urlRoot}${window.location.pathname}${window.location.hash}`;
     return;
-  } else if (result.status === "incorrect") {
-    // Incorrect key
-    result_notification.addClass(
-      "alert alert-danger alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    answer_input.removeClass("correct");
-    answer_input.addClass("wrong");
-    setTimeout(function() {
-      answer_input.removeClass("wrong");
-    }, 3000);
-  } else if (result.status === "correct") {
-    // Challenge Solved
-    result_notification.addClass(
-      "alert alert-success alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    if (
-      $(".challenge-solves")
-        .text()
-        .trim()
-    ) {
-      // Only try to increment solves if the text isn't hidden
-      $(".challenge-solves").text(
-        parseInt(
-          $(".challenge-solves")
-            .text()
-            .split(" ")[0]
-        ) +
-          1 +
-          " Solves"
-      );
-    }
-
-    answer_input.val("");
-    answer_input.removeClass("wrong");
-    answer_input.addClass("correct");
-
-    if (CTFd._internal.challenge.data.next_id) {
-      $(".submit-row").html(next_btn);
-    }
-  } else if (result.status === "already_solved") {
-    // Challenge already solved
-    result_notification.addClass(
-      "alert alert-info alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    answer_input.addClass("correct");
-
-    if (CTFd._internal.challenge.data.next_id) {
-      $(".submit-row").html(next_btn);
-    }
-  } else if (result.status === "paused") {
-    // CTF is paused
-    result_notification.addClass(
-      "alert alert-warning alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-  } else if (result.status === "ratelimited") {
-    // Keys per minute too high
-    result_notification.addClass(
-      "alert alert-warning alert-dismissable text-center"
-    );
-    result_notification.slideDown();
-
-    answer_input.addClass("too-fast");
-    setTimeout(function() {
-      answer_input.removeClass("too-fast");
-    }, 3000);
   }
-  setTimeout(function() {
-    $(".alert").slideUp();
-    $("#challenge-submit").removeClass("disabled-button");
-    $("#challenge-submit").prop("disabled", false);
+
+  switch (result.status) {
+    case "incorrect":
+      document.getElementById("notification-wrapper").classList.remove("d-none");
+      alertBox.classList.add("alert-danger");
+      input.classList.remove("correct");
+      input.classList.add("wrong");
+      break;
+
+    case "correct":
+      document.getElementById("notification-wrapper").classList.remove("d-none");
+      alertBox.classList.add("alert-success");
+      if (document.querySelector(".challenge-solves")) {
+        const count = parseInt(document.querySelector(".challenge-solves").textContent) || 0;
+        document.querySelector(".challenge-solves").textContent = `${count + 1} Solves`;
+      }
+      input.value = "";
+      input.classList.remove("wrong");
+      input.classList.add("correct");
+
+      if (CTFd._internal.challenge.data.next_id) {
+        document.querySelector(".submit-row")?.replaceChildren(nextBtn);
+      }
+      break;
+
+    case "already_solved":
+      document.getElementById("notification-wrapper").classList.remove("d-none");
+      alertBox.classList.add("alert-info");
+      input.classList.add("correct");
+      if (CTFd._internal.challenge.data.next_id) {
+        document.querySelector(".submit-row")?.replaceChildren(nextBtn);
+      }
+      break;
+
+    case "paused":
+    case "ratelimited":
+      document.getElementById("notification-wrapper").classList.remove("d-none");
+      alertBox.classList.add("alert-warning");
+      input.classList.add("too-fast");
+      break;
+  }
+
+  // Reset after timeout
+  setTimeout(() => {
+    alertBox.classList.remove("show");
+    input.classList.remove("wrong", "too-fast");
   }, 3000);
 }
 
+
+function loadHint(id) {
+  CTFd.api.get_hint({ hintId: id }).then((response) => {
+    if (!response.success) {
+      const msg = Object.values(response.errors).join("\n");
+      showHTMLModal("Hint Error", `<div class="text-danger">${msg}</div>`);
+      return;
+    }
+
+    const hint = response.data;
+    if (hint.html) {
+      console.log("showing the hint contents: " + hint.html);
+      showHTMLModal(hint.title || "Hint", hint.html);
+      return;
+    }
+
+    // If locked, offer unlock
+    if (confirm("Are you sure you want to unlock this hint?")) {
+      const params = { target: id, type: "hints" };
+      CTFd.api.post_unlock_list({}, params).then((unlockResponse) => {
+        if (unlockResponse.success) {
+          CTFd.api.get_hint({ hintId: id }).then((r) =>
+            showHTMLModal(r.data.title || "Hint", r.data.html)
+          );
+        } else {
+          showHTMLModal("Hint Error", `<div class="text-danger">${unlockResponse.errors?.score || "Unable to unlock hint."}</div>`);
+        }
+      });
+    }
+  });
+}
+
+
+function showHTMLModal(title, htmlContent) {
+  // Create modal elements manually
+  const modalEl = document.createElement("div");
+  modalEl.className = "modal fade";
+  modalEl.tabIndex = -1;
+
+  modalEl.innerHTML = `
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">${title}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body"></div>
+      </div>
+    </div>
+  `;
+
+  // Insert sanitized HTML into the modal body
+  modalEl.querySelector(".modal-body").innerHTML = htmlContent;
+
+  document.body.appendChild(modalEl);
+  const modal = new Modal(modalEl);
+  modal.show();
+
+  modalEl.addEventListener("hidden.bs.modal", () => {
+    modalEl.remove();
+  });
+}
+
+
 function markSolves() {
-  challenges.map(challenge => {
+  challenges.forEach((challenge) => {
     if (challenge.solved_by_me) {
-      const btn = $(`button[value="${challenge.id}"]`);
-      btn.addClass("solved-challenge");
-      btn.prepend("<i class='fas fa-check corner-button-check'></i>");
+      const btn = document.querySelector(`button[value='${challenge.id}']`);
+      if (btn) {
+        btn.classList.add("solved-challenge");
+        btn.insertAdjacentHTML(
+          "afterbegin",
+          "<i class='fas fa-check corner-button-check'></i>"
+        );
+      }
     }
   });
 }
 
 function getSolves(id) {
-  return CTFd.api.get_challenge_solves({ challengeId: id }).then(response => {
+  return CTFd.api.get_challenge_solves({ challengeId: id }).then((response) => {
     const data = response.data;
-    $(".challenge-solves").text(parseInt(data.length) + " Solves");
-    const box = $("#challenge-solves-names");
-    box.empty();
-    for (let i = 0; i < data.length; i++) {
-      const id = data[i].account_id;
-      const name = data[i].name;
-      const date = dayjs(data[i].date).fromNow();
-      const account_url = data[i].account_url;
-      box.append(
-        '<tr><td><a href="{0}">{2}</td><td>{3}</td></tr>'.format(
-          account_url,
-          id,
-          htmlEntities(name),
-          date
-        )
-      );
-    }
+    const box = document.getElementById("challenge-solves-names");
+    document.querySelector(".challenge-solves").textContent = `${data.length} Solves`;
+    box.innerHTML = "";
+    data.forEach((solv) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td><a href="${solv.account_url}">${htmlEntities(
+        solv.name
+      )}</a></td><td>${dayjs(solv.date).fromNow()}</td>`;
+      box.appendChild(row);
+    });
   });
 }
 
 function loadChals() {
-  return CTFd.api.get_challenge_list().then(function(response) {
-    const categories = [];
-    const $challenges_board = $("#challenges-board");
+  return CTFd.api.get_challenge_list().then((response) => {
     challenges = response.data;
+    const board = document.getElementById("challenges-board");
+    board.innerHTML = "";
 
-    if (window.BETA_sortChallenges) {
-      challenges = window.BETA_sortChallenges(challenges);
-    }
+    const categories = [...new Set(challenges.map((c) => c.category))];
+    categories.forEach((category) => {
+      const catId = category.replace(/ /g, "-");
+      const row = document.createElement("div");
+      row.id = `${catId}-row`;
+      row.className = "pt-5";
+      row.innerHTML = `
+        <div class="category-header col-md-12 mb-3">
+          <h3>${category}</h3>
+        </div>
+        <div class="category-challenges col-md-12">
+          <div class="challenges-row col-md-12"></div>
+        </div>`;
+      board.appendChild(row);
+    });
 
-    $challenges_board.empty();
+    challenges.forEach((chal) => {
+      const chalId = chal.name.replace(/ /g, "-");
+      const catId = chal.category.replace(/ /g, "-");
 
-    for (let i = challenges.length - 1; i >= 0; i--) {
-      if ($.inArray(challenges[i].category, categories) == -1) {
-        const category = challenges[i].category;
-        categories.push(category);
+      const chalWrap = document.createElement("div");
+      chalWrap.id = chalId;
+      chalWrap.className = "col-md-3 d-inline-block me-3";
 
-        const categoryid = category.replace(/ /g, "-").hashCode();
-        const categoryrow = $(
-          "" +
-            '<div id="{0}-row" class="pt-5">'.format(categoryid) +
-            '<div class="category-header col-md-12 mb-3">' +
-            "</div>" +
-            '<div class="category-challenges col-md-12">' +
-            '<div class="challenges-row col-md-12"></div>' +
-            "</div>" +
-            "</div>"
-        );
-        categoryrow
-          .find(".category-header")
-          .append($("<h3>" + category + "</h3>"));
+      const btn = document.createElement("button");
+      btn.className = `btn btn-dark challenge-button w-100 text-truncate pt-3 pb-3 mb-2${
+        solves.includes(chal.id) ? " solved-challenge" : ""
+      }`;
+      btn.value = chal.id;
+      btn.innerHTML = `
+        ${solves.includes(chal.id) ? "<i class='fas fa-check corner-button-check'></i>" : ""}
+        <p>${chal.name}</p>
+        <span>${chal.value}</span>`;
 
-        $challenges_board.append(categoryrow);
-      }
-    }
+      chal.tags.forEach((tag) => {
+        chalWrap.classList.add(`tag-${tag.value.replace(/ /g, "-")}`);
+      });
 
-    for (let i = 0; i <= challenges.length - 1; i++) {
-      const chalinfo = challenges[i];
-      const chalid = chalinfo.name.replace(/ /g, "-").hashCode();
-      const catid = chalinfo.category.replace(/ /g, "-").hashCode();
-      const chalwrap = $(
-        "<div id='{0}' class='col-md-3 d-inline-block'></div>".format(chalid)
-      );
-      let chalbutton;
+      chalWrap.appendChild(btn);
+      const targetRow = document.querySelector(`#${catId}-row .challenges-row`);
+      if (targetRow) targetRow.appendChild(chalWrap);
 
-      if (solves.indexOf(chalinfo.id) == -1) {
-        chalbutton = $(
-          "<button class='btn btn-dark challenge-button w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'></button>".format(
-            chalinfo.id
-          )
-        );
-      } else {
-        chalbutton = $(
-          "<button class='btn btn-dark challenge-button solved-challenge w-100 text-truncate pt-3 pb-3 mb-2' value='{0}'><i class='fas fa-check corner-button-check'></i></button>".format(
-            chalinfo.id
-          )
-        );
-      }
-
-      const chalheader = $("<p>{0}</p>".format(chalinfo.name));
-      const chalscore = $("<span>{0}</span>".format(chalinfo.value));
-      for (let j = 0; j < chalinfo.tags.length; j++) {
-        const tag = "tag-" + chalinfo.tags[j].value.replace(/ /g, "-");
-        chalwrap.addClass(tag);
-      }
-
-      chalbutton.append(chalheader);
-      chalbutton.append(chalscore);
-      chalwrap.append(chalbutton);
-
-      $("#" + catid + "-row")
-        .find(".category-challenges > .challenges-row")
-        .append(chalwrap);
-    }
-
-    $(".challenge-button").click(function(_event) {
-      loadChal(this.value);
+      btn.addEventListener("click", () => loadChal(btn.value));
     });
   });
 }
@@ -361,94 +365,24 @@ function update() {
   return loadChals().then(markSolves);
 }
 
-$(() => {
+if (document.readyState !== "loading") {
   update().then(() => {
     if (window.location.hash.length > 0) {
       loadChalByName(decodeURIComponent(window.location.hash.substring(1)));
     }
   });
-
-  $("#challenge-input").keyup(function(event) {
-    if (event.keyCode == 13) {
-      $("#challenge-submit").click();
-    }
+} else {
+  document.addEventListener("DOMContentLoaded", () => {
+    update().then(() => {
+      if (window.location.hash.length > 0) {
+        loadChalByName(decodeURIComponent(window.location.hash.substring(1)));
+      }
+    });
   });
+}
 
-  $(".nav-tabs a").click(function(event) {
-    event.preventDefault();
-    $(this).tab("show");
-  });
+runStyles();
 
-  $("#challenge-window").on("hidden.bs.modal", function(_event) {
-    $(".nav-tabs a:first").tab("show");
-    history.replaceState("", window.document.title, window.location.pathname);
-  });
-
-  $(".challenge-solves").click(function(_event) {
-    getSolves($("#challenge-id").val());
-  });
-
-  $("#challenge-window").on("hide.bs.modal", function(_event) {
-    $("#challenge-input").removeClass("wrong");
-    $("#challenge-input").removeClass("correct");
-    $("#incorrect-key").slideUp();
-    $("#correct-key").slideUp();
-    $("#already-solved").slideUp();
-    $("#too-fast").slideUp();
-  });
-});
-setInterval(update, 300000); // Update every 5 minutes.
-
-const displayHint = data => {
-  ezAlert({
-    title: "Hint",
-    body: data.html,
-    button: "Got it!"
-  });
-};
-
-const displayUnlock = id => {
-  ezQuery({
-    title: "Unlock Hint?",
-    body: "Are you sure you want to open this hint?",
-    success: () => {
-      const params = {
-        target: id,
-        type: "hints"
-      };
-      CTFd.api.post_unlock_list({}, params).then(response => {
-        if (response.success) {
-          CTFd.api.get_hint({ hintId: id }).then(response => {
-            displayHint(response.data);
-          });
-
-          return;
-        }
-
-        ezAlert({
-          title: "Error",
-          body: response.errors.score,
-          button: "Got it!"
-        });
-      });
-    }
-  });
-};
-
-const loadHint = id => {
-  CTFd.api.get_hint({ hintId: id }).then(response => {
-    if (!response.success) {
-      let msg = Object.values(response.errors).join("\n");
-      alert(msg);
-      return;
-    }
-    if (response.data.content) {
-      displayHint(response.data);
-      return;
-    }
-
-    displayUnlock(id);
-  });
-};
+setInterval(update, 300000); // Refresh every 5 minutes
 
 window.updateChallengeBoard = update;

@@ -9,7 +9,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2 class="modal-action text-center w-100">Edit Team</h2>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -17,44 +17,44 @@
 					{% with form = Forms.teams.TeamSettingsForm(obj=team) %}
 					{% from "macros/forms.html" import render_extra_fields %}
 					<form id="team-info-form" method="POST">
-						<div class="form-group">
+						<div class="mb-4">
 							<b>{{ form.name.label }}</b>
 							{{ form.name(class="form-control") }}
 							<small class="form-text text-muted">
 								{{ form.name.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-4">
 							<b>{{ form.password.label }}</b>
 							{{ form.password(class="form-control") }}
 							<small class="form-text text-muted">
 								{{ form.password.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-4">
 							<b>{{ form.confirm.label }}</b>
 							{{ form.confirm(class="form-control") }}
 							<small class="form-text text-muted">
 								{{ form.confirm.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-4">
 							<b>{{ form.website.label }}</b>
 							{{ form.website(class="form-control") }}
 							<small class="form-text text-muted">
 								{{ form.website.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-4">
 							<b>{{ form.affiliation.label }}</b>
 							{{ form.affiliation(class="form-control") }}
 							<small class="form-text text-muted">
 								{{ form.affiliation.description }}
 							</small>
 						</div>
-						<div class="form-group">
+						<div class="mb-4">
 							<b>{{ form.country.label }}</b>
-							{{ form.country(class="form-control custom-select") }}
+							{{ form.country(class="form-control form-select") }}
 							<small class="form-text text-muted">
 								{{ form.country.description }}
 							</small>
@@ -67,7 +67,7 @@
 						<div id="results">
 
 						</div>
-						{{ form.submit(class="btn btn-primary btn-outlined float-right modal-action") }}
+						{{ form.submit(class="btn btn-primary btn-outlined float-end modal-action") }}
 					</form>
 					{% endwith %}
 				</div>
@@ -80,24 +80,24 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2 class="modal-action text-center w-100">Choose Captain</h2>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body clearfix">
 					{% with form = Forms.teams.TeamCaptainForm(captain_id=team.captain_id) %}
 					<form id="team-captain-form" method="POST">
-						<div class="form-group">
+						<div class="mb-4">
 							{{ form.captain_id.label }}
 							{% for member in team.members %}
 								{# Append members to the select choices #}
 								{% set _ = form.captain_id.choices.append((member.id, member.name)) %}
 							{% endfor %}
-							{{ form.captain_id(class="form-control custom-select") }}
+							{{ form.captain_id(class="form-control form-select") }}
 						</div>
 						<div id="results">
 						</div>
-						{{ form.submit(class="btn btn-primary btn-outlined float-right modal-action") }}
+						{{ form.submit(class="btn btn-primary btn-outlined float-end modal-action") }}
 					</form>
 					{% endwith %}
 				</div>
@@ -110,14 +110,14 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h2 class="modal-action text-center w-100">Invite Users</h2>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body clearfix">
 					{% with form = Forms.teams.TeamInviteForm() %}
 					<form method="POST">
-						<div class="form-group">
+						<div class="mb-4">
 							<b>{{ form.link.label }}</b>
 							<div class="input-group mb-3">
 								{{ form.link(id="team-invite-link", class="form-control") }}
@@ -141,22 +141,22 @@
 		</div>
 	</div>
 
-	<div class="jumbotron">
+	<div class="container-fluid bg-light p-5 text-center mb-4">
 		<div class="container">
 			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
 			{% if team.oauth_id %}
 				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-					<h3><span class="badge badge-primary">Official</span></h3>
+					<h3><span class="badge bg-primary">Official</span></h3>
 				</a>
 			{% endif %}
 			{% if team.affiliation %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">{{ team.affiliation }}</span>
+					<span class="badge bg-primary">{{ team.affiliation }}</span>
 				</h3>
 			{% endif %}
 			{% if team.country %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">
+					<span class="badge bg-primary">
 						<i class="flag-{{ team.country.lower() }}"></i>
 						{{ lookup_country_code(team.country) }}
 					</span>
@@ -262,7 +262,7 @@
 									{{ member.name }}
 								</a>
 								{% if team.captain_id == member.id %}
-									<span class="badge badge-primary ml-2">Captain</span>
+									<span class="badge bg-primary ms-2">Captain</span>
 								{% endif %}
 							</td>
 							<td>{{ member.score }}</td>
@@ -374,13 +374,13 @@
 		} | tojson }};
 		var team_captain = {{ (user.id == team.captain_id) | tojson }};
 	</script>
-	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
 	{% if solves or awards %}
-		<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
-		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+		<script defer type="module" src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+		<script defer type="module" src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/pages/teams/private.js') }}"></script>
 {% endblock %}

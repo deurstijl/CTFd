@@ -4,14 +4,14 @@
 {% endblock %}
 
 {% block content %}
-	<div class="jumbotron">
+	<div class="container-fluid bg-light p-5 text-center mb-4">
 		<div class="container">
 			<h1>{{ user.name }}</h1>
 
 			{% if user.team_id %}
 				<h2>
 					<a href="{{ url_for('teams.public', team_id=user.team_id) }}">
-						<span class="badge badge-secondary">
+						<span class="badge bg-secondary">
 							{{ user.team.name }}
 						</span>
 					</a>
@@ -20,19 +20,19 @@
 
 			{% if user.oauth_id %}
 				<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-					<h3><span class="badge badge-primary">Official</span></h3>
+					<h3><span class="badge bg-primary">Official</span></h3>
 				</a>
 			{% endif %}
 
 			{% if user.affiliation %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">{{ user.affiliation }}</span>
+					<span class="badge bg-primary">{{ user.affiliation }}</span>
 				</h3>
 			{% endif %}
 
 			{% if user.country %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">
+					<span class="badge bg-primary">
 						<i class="flag-{{ user.country.lower() }}"></i>
 						{{ lookup_country_code(user.country) }}
 					</span>
@@ -108,7 +108,7 @@
 				{% for award in awards %}
 					<div class="col-md-3 col-sm-6">
 						<p class="text-center">
-							<i class="award-icon award-{{ award.icon }} fa-2x"></i>
+							<i class="fas fa-{{ award.icon }} fa-2x"></i>
 							<br>
 							<strong>{{ award.name }}</strong>
 						</p>
@@ -171,10 +171,10 @@
 			'account_id': user.id,
 		} | tojson }};
 	</script>
-	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 {% endblock %}

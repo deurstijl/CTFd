@@ -8,8 +8,7 @@ const modalTpl =
   '    <div class="modal-content">' +
   '      <div class="modal-header">' +
   '        <h5 class="modal-title">{0}</h5>' +
-  '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
-  '          <span aria-hidden="true">&times;</span>' +
+  '        <button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="modal" aria-label="Close">' +
   "        </button>" +
   "      </div>" +
   '      <div class="modal-body">' +
@@ -23,9 +22,8 @@ const modalTpl =
 const toastTpl =
   '<div class="toast m-3" role="alert">' +
   '  <div class="toast-header">' +
-  '    <strong class="mr-auto">{0}</strong>' +
-  '    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">' +
-  '      <span aria-hidden="true">&times;</span>' +
+  '    <strong class="me-auto">{0}</strong>' +
+  '    <button type="button" class="ms-2 mb-1 close" data-bs-dismiss="toast" aria-label="Close">' +
   "    </button>" +
   "  </div>" +
   '  <div class="toast-body">{1}</div>' +
@@ -39,24 +37,24 @@ const progressTpl =
 
 const errorTpl =
   '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
-  '  <span class="sr-only">Error:</span>\n' +
+  '  <span class="visually-hidden">Error:</span>\n' +
   "  {0}\n" +
-  '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>\n' +
+  '  <button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="alert" aria-label="Close"></button>\n' +
   "</div>";
 
 const successTpl =
   '<div class="alert alert-success alert-dismissable submit-row" role="alert">\n' +
   "  <strong>Success!</strong>\n" +
   "  {0}\n" +
-  '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>\n' +
+  '  <button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="alert" aria-label="Close"></button>\n' +
   "</div>";
 
 const buttonTpl =
-  '<button type="button" class="btn btn-primary" data-dismiss="modal">{0}</button>';
+  '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">{0}</button>';
 const noTpl =
-  '<button type="button" class="btn btn-danger" data-dismiss="modal">No</button>';
+  '<button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>';
 const yesTpl =
-  '<button type="button" class="btn btn-primary" data-dismiss="modal">Yes</button>';
+  '<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Yes</button>';
 
 export function ezAlert(args) {
   const modal = modalTpl.format(args.title);
@@ -118,7 +116,7 @@ export function ezToast(args) {
 
   if (args.onclose) {
     $(obj)
-      .find("button[data-dismiss=toast]")
+      .find("button[data-bs-dismiss=toast]")
       .click(function() {
         args.onclose();
       });

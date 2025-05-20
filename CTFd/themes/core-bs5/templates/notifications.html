@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<div class="jumbotron">
+	<div class="container-fluid bg-light p-5 text-center mb-4">
 		<div class="container">
 			<h1>Notifications</h1>
 		</div>
@@ -25,5 +25,5 @@
 {% endblock %}
 
 {% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/notifications.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/pages/notifications.js') }}"></script>
 {% endblock %}

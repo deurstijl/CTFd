@@ -4,22 +4,22 @@
 {% endblock %}
 
 {% block content %}
-	<div class="jumbotron">
+	<div class="container-fluid bg-light p-5 text-center mb-4">
 		<div class="container">
 			<h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
 			{% if team.oauth_id %}
 				<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-					<h3><span class="badge badge-primary">Official</span></h3>
+					<h3><span class="badge bg-primary">Official</span></h3>
 				</a>
 			{% endif %}
 			{% if team.affiliation %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">{{ team.affiliation }}</span>
+					<span class="badge bg-primary">{{ team.affiliation }}</span>
 				</h3>
 			{% endif %}
 			{% if team.country %}
 				<h3 class="d-inline-block">
-					<span class="badge badge-primary">
+					<span class="badge bg-primary">
 						<i class="flag-{{ team.country.lower() }}"></i>
 						{{ lookup_country_code(team.country) }}
 					</span>
@@ -189,12 +189,12 @@
 			'account_id': team.id,
 		} | tojson }};
 	</script>
-	<script defer src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/echarts.bundle.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/graphs.js') }}"></script>
 {% endblock %}
 
 {% block entrypoint %}
 	{% if solves or awards %}
-		<script defer src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
+		<script defer type="module" src="{{ url_for('views.themes', path='js/pages/stats.js') }}"></script>
 	{% endif %}
 {% endblock %}

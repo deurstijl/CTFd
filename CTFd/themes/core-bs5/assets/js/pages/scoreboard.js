@@ -1,7 +1,7 @@
 import "./main";
 import $ from "jquery";
 import CTFd from "../CTFd";
-import echarts from "echarts/dist/echarts-en.common";
+import { init } from "echarts";
 import dayjs from "dayjs";
 import { htmlEntities, cumulativeSum, colorHash } from "../utils";
 
@@ -148,7 +148,7 @@ const createGraph = () => {
     }
 
     graph.empty(); // Remove spinners
-    let chart = echarts.init(document.querySelector("#score-graph"));
+    let chart = init(document.querySelector("#score-graph"));
     chart.setOption(option);
 
     $(window).on("resize", function() {
@@ -161,7 +161,7 @@ const createGraph = () => {
 
 const updateGraph = () => {
   buildGraphData().then(option => {
-    let chart = echarts.init(document.querySelector("#score-graph"));
+    let chart = init(document.querySelector("#score-graph"));
     chart.setOption(option);
   });
 };

@@ -7,7 +7,7 @@
 	<link rel="shortcut icon" href="{{ Configs.ctf_small_icon }}" type="image/x-icon">
 	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/fonts.css') }}">
 	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/main.css') }}">
-	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/core.css') }}">
+	<link rel="stylesheet" href="{{ url_for('views.themes', path='css/core-style.css') }}">
 	{% block stylesheets %}
 	{% endblock %}
 
@@ -37,6 +37,19 @@
 		.w10px{
 			width: 10px;
 		}
+		.btn-hint-light {
+			background-color: #f8f9fa;
+			border-color: #f8f9fa;
+			color: #6c757d;
+			padding: 0.25rem 0.5rem; /* smaller vertical padding */
+			font-size: 0.875rem;     /* slightly smaller text */
+			width: 100%;
+		}
+		.btn-hint-light:hover {
+			background-color: #e2e6ea;
+			border-color: #dae0e5;
+			color: #495057;
+		}
 	</style>
 	{{ Configs.theme_header }}
 </head>
@@ -56,12 +69,12 @@
 		</div>
 	</footer>
 
-	<script defer src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/core.js') }}"></script>
-	<script defer src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/vendor.bundle.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/core.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/helpers.js') }}"></script>
 
 	{% block entrypoint %}
-	<script defer src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
+	<script defer type="module" src="{{ url_for('views.themes', path='js/pages/main.js') }}"></script>
 	{% endblock %}
 
 	{% block scripts %}

@@ -1,45 +1,48 @@
-import "bootstrap/dist/js/bootstrap.bundle";
-import $ from "jquery";
+import "bootstrap"; // Imports all Bootstrap 5 JS components
 import hljs from "highlight.js";
 
 export default () => {
-  // TODO: This is kind of a hack to mimic a React-like state construct.
-  // It should be removed once we have a real front-end framework in place.
-  $(":input").each(function() {
-    $(this).data("initial", $(this).val());
+  // Save initial values of inputs
+  document.querySelectorAll(":is(input, select, textarea)").forEach((el) => {
+    el.dataset.initial = el.value;
   });
 
-  $(".form-control").bind({
-    focus: function() {
-      $(this).removeClass("input-filled-invalid");
-      $(this).addClass("input-filled-valid");
-    },
-    blur: function() {
-      if ($(this).val() === "") {
-        $(this).removeClass("input-filled-invalid");
-        $(this).removeClass("input-filled-valid");
-      }
-    }
-  });
-
-  $(".form-control").each(function() {
-    if ($(this).val()) {
-      $(this).addClass("input-filled-valid");
-    }
-  });
-
-  $(".page-select").change(function() {
-    let url = new URL(window.location);
-    url.searchParams.set("page", this.value);
-    window.location.href = url.toString();
-  });
-
-  $('[data-toggle="tooltip"]').tooltip();
-
-  $(() => {
-    // Syntax highlighting
-    document.querySelectorAll("pre code").forEach(block => {
-      hljs.highlightBlock(block);
+  // Add/remove "input-filled-valid/invalid" on focus/blur
+  document.querySelectorAll(".form-control").forEach((el) => {
+    el.addEventListener("focus", () => {
+      el.classList.remove("input-filled-invalid");
+      el.classList.add("input-filled-valid");
     });
+
+    el.addEventListener("blur", () => {
+      if (!el.value) {
+        el.classList.remove("input-filled-invalid");
+        el.classList.remove("input-filled-valid");
+      }
+    });
+
+    // Pre-fill state on load
+    if (el.value) {
+      el.classList.add("input-filled-valid");
+    }
+  });
+
+  // Handle page-select dropdown navigation
+  document.querySelectorAll(".page-select").forEach((el) => {
+    el.addEventListener("change", (e) => {
+      const url = new URL(window.location);
+      url.searchParams.set("page", e.target.value);
+      window.location.href = url.toString();
+    });
+  });
+
+  // Initialize Bootstrap tooltips
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+    new bootstrap.Tooltip(el);
+  });
+
+  // Highlight code blocks
+  document.querySelectorAll("pre code").forEach((block) => {
+    hljs.highlightElement(block);
   });
 };

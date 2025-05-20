@@ -1,3 +1,4 @@
+import "bootstrap";
 import CTFd from "../CTFd";
 import $ from "jquery";
 import dayjs from "dayjs";

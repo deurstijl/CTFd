@@ -9,7 +9,7 @@ import Q from "q";
  * @param {string} [domainOrOptions.domain] - The project domain
  * @param {object} [domainOrOptions.token] - auth token - object with value property and optional headerOrQueryName and isQuery properties
  */
-let API = (function() {
+export const API = (function() {
   "use strict";
 
   function API(options) {
@@ -3610,5 +3610,3 @@ let API = (function() {
   return API;
 })();
 
-// eslint-disable-next-line no-undef
-exports.API = API;

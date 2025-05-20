@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block content %}
-	<div class="jumbotron">
+	<div class="container-fluid bg-light p-5 text-center mb-4">
 		<div class="container">
 			<h1>Users</h1>
 		</div>
@@ -22,14 +22,14 @@
 				{% endif %}
 
 				{% with form = Forms.users.PublicUserSearchForm(field=field, q=q) %}
-				<form method="GET" class="form-inline">
-					<div class="form-group col-md-2">
-						{{ form.field(class="form-control custom-select w-100") }}
+				<form method="GET" class="d-flex align-items-center gap-2">
+					<div class="mb-4 col-md-2">
+						{{ form.field(class="form-control form-select w-100") }}
 					</div>
-					<div class="form-group col-md-8">
+					<div class="mb-4 col-md-8">
 						{{ form.q(class="form-control w-100", placeholder="Search for matching users") }}
 					</div>
-					<div class="form-group col-md-2">
+					<div class="mb-4 col-md-2">
 						<button type="submit" class="btn btn-primary w-100">
 							<i class="fas fa-search" aria-hidden="true"></i>
 						</button>
@@ -65,7 +65,7 @@
 								{% endif %}
 								{% if user.oauth_id %}
 									<a href="https://majorleaguecyber.org/u/{{ user.name }}">
-										<span class="badge badge-primary">Official</span>
+										<span class="badge bg-primary">Official</span>
 									</a>
 								{% endif %}
 							</td>

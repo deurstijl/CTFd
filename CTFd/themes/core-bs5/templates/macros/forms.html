@@ -1,6 +1,6 @@
 {% macro render_extra_fields(fields, show_labels=True, show_optionals=True, show_descriptions=True) -%}
     {% for field in fields %}
-    <div class="form-group">
+    <div class="mb-4">
         {% if field.field_type == "text" %}
             {% if show_labels %}
                 <b>{{ field.label }}</b>
@@ -8,7 +8,7 @@
 
             {% if show_optionals %}
                 {% if field.flags.required is false %}
-                    <small class="float-right text-muted">Optional</small>
+                    <small class="float-end text-muted">Optional</small>
                 {% endif %}
             {% endif %}
 

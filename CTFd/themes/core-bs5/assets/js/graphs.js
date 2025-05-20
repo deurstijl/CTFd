@@ -1,5 +1,5 @@
 import $ from "jquery";
-import echarts from "echarts/dist/echarts-en.common";
+import { init, dispose } from "echarts";
 import dayjs from "dayjs";
 import { cumulativeSum, colorHash } from "./utils";
 
@@ -310,7 +310,7 @@ export function createGraph(
   account_id
 ) {
   const cfg = graph_configs[graph_type];
-  let chart = echarts.init(document.querySelector(target));
+  let chart = init(document.querySelector(target));
   chart.setOption(cfg.format(type, id, name, account_id, data));
   $(window).on("resize", function() {
     if (chart != null && chart != undefined) {
@@ -329,10 +329,10 @@ export function updateGraph(
   account_id
 ) {
   const cfg = graph_configs[graph_type];
-  let chart = echarts.init(document.querySelector(target));
+  let chart = init(document.querySelector(target));
   chart.setOption(cfg.format(type, id, name, account_id, data));
 }
 
 export function disposeGraph(target) {
-  echarts.dispose(document.querySelector(target));
+  dispose(document.querySelector(target));
 }

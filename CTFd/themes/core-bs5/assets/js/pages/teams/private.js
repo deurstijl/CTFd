@@ -106,9 +106,9 @@ $(() => {
           if (!object.success) {
             const error_template =
               '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
-              '  <span class="sr-only">Error:</span>\n' +
+              '  <span class="visually-hidden">Error:</span>\n' +
               "  {0}\n" +
-              '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>\n' +
+              '  <button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>\n' +
               "</div>";
             Object.keys(object.errors).map(function(error) {
               let i = form.find("input[name={0}]".format(error));
