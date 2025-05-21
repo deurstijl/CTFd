@@ -4,6 +4,7 @@ import { default as ezq } from "./ezq";
 import { htmlEntities } from "@ctfdio/ctfd-js/utils/html";
 import { colorHash } from "./styles";
 import { copyToClipboard } from "./ui";
+import { Modal } from "bootstrap";
 
 const utils = {
   htmlEntities: htmlEntities,
@@ -11,59 +12,109 @@ const utils = {
   copyToClipboard: copyToClipboard,
 };
 
+export function createUploadProgressModal(title = "Upload Progress") {
+  let modalEl = document.getElementById("upload-progress-modal");
+
+  if (!modalEl) {
+    modalEl = document.createElement("div");
+    modalEl.id = "upload-progress-modal";
+    modalEl.className = "modal fade";
+    modalEl.innerHTML = `
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">${title}</h5>
+          </div>
+          <div class="modal-body">
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped progress-bar-animated"
+                   role="progressbar"
+                   aria-valuenow="0"
+                   aria-valuemin="0"
+                   aria-valuemax="100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modalEl);
+  }
+
+  const progressBar = modalEl.querySelector(".progress-bar");
+  if (progressBar) {
+    // Set initial width via JS, CSP-compliant
+    progressBar.style.width = "0%";
+  }
+
+  const bsModal = Modal.getOrCreateInstance(modalEl);
+  return {
+    show: () => bsModal.show(),
+    hide: () => bsModal.hide(),
+    querySelector: (sel) => modalEl.querySelector(sel),
+  };
+}
+
 const files = {
-  upload: (form, extra_data, cb) => {
+  upload: (form, extraData = {}, callback) => {
     const CTFd = window.CTFd;
-    if (form instanceof jQuery) {
-      form = form[0];
+    const csrfNonce = CTFd?.config?.csrfNonce || "";
+
+    // Ensure it's a raw form element
+    if (form instanceof HTMLFormElement === false) {
+      form = form?.form || form?.target || form;
     }
-    var formData = new FormData(form);
-    formData.append("nonce", CTFd.config.csrfNonce);
-    for (let [key, value] of Object.entries(extra_data)) {
+
+    const formData = new FormData(form);
+    formData.append("nonce", csrfNonce);
+
+    for (const [key, value] of Object.entries(extraData)) {
       formData.append(key, value);
     }
 
-    var pg = ezq.ezProgressBar({
-      width: 0,
-      title: "Upload Progress",
-    });
-    $.ajax({
-      url: CTFd.config.urlRoot + "/api/v1/files",
-      data: formData,
-      type: "POST",
-      cache: false,
-      contentType: false,
-      processData: false,
-      xhr: function () {
-        var xhr = $.ajaxSettings.xhr();
-        xhr.upload.onprogress = function (e) {
-          if (e.lengthComputable) {
-            var width = (e.loaded / e.total) * 100;
-            pg = ezq.ezProgressBar({
-              target: pg,
-              width: width,
-            });
-          }
-        };
-        return xhr;
-      },
-      success: function (data) {
-        form.reset();
-        pg = ezq.ezProgressBar({
-          target: pg,
-          width: 100,
-        });
-        setTimeout(function () {
-          pg.modal("hide");
-        }, 500);
+    // Create progress modal
+    const modal = createUploadProgressModal();
+    const progressBar = modal.querySelector(".progress-bar");
+    modal.show();
 
-        if (cb) {
-          cb(data);
-        }
-      },
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${CTFd.config.urlRoot}/api/v1/files`, true);
+
+    xhr.upload.addEventListener("progress", (e) => {
+      if (e.lengthComputable) {
+        const percent = (e.loaded / e.total) * 100;
+        progressBar.style.width = `${percent.toFixed(1)}%`;
+        progressBar.setAttribute("aria-valuenow", percent.toFixed(1));
+      }
     });
+
+    xhr.onload = () => {
+      form.reset();
+      progressBar.style.width = `100%`;
+      progressBar.setAttribute("aria-valuenow", "100");
+
+      setTimeout(() => {
+        modal.hide();
+      }, 500);
+
+      try {
+        const response = JSON.parse(xhr.responseText);
+        if (callback) callback(response);
+      } catch (err) {
+        console.error("Upload response parsing failed", err);
+        alert("Upload failed: invalid server response.");
+      }
+    };
+
+    xhr.onerror = () => {
+      modal.hide();
+      alert("An error occurred during the file upload.");
+    };
+
+    xhr.send(formData);
   },
 };
+
 
 const comments = {
   get_comments: (extra_args) => {
@@ -119,11 +170,22 @@ const comments = {
   },
 };
 
+export function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.head.appendChild(s);
+  });
+}
+
 const helpers = {
   files,
   comments,
   utils,
   ezq,
+  createUploadProgressModal,
 };
 
 export default helpers;

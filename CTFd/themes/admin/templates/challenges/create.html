@@ -3,7 +3,7 @@
 
 <form method="POST" action="{{ script_root }}/admin/challenges/new" enctype="multipart/form-data">
 	{% block name %}
-	<div class="form-group">
+	<div class="mb-4">
 		<label>
 			Name:<br>
 			<small class="form-text text-muted">
@@ -15,7 +15,7 @@
 	{% endblock %}
 
 	{% block category %}
-	<div class="form-group">
+	<div class="mb-4">
 		<label>
 			Category:<br>
 			<small class="form-text text-muted">
@@ -28,7 +28,7 @@
 
 
 	{% block message %}
-	<div class="form-group">
+	<div class="mb-4">
 		<label>
 			Message:<br>
 			<small class="form-text text-muted">
@@ -43,7 +43,7 @@
 	{% endblock %}
 
 	{% block value %}
-	<div class="form-group">
+	<div class="mb-4">
 		<label>
 			Value:<br>
 			<small class="form-text text-muted">
@@ -63,8 +63,8 @@
 	{% endblock %}
 
 	{% block submit %}
-	<div class="form-group">
-		<button class="btn btn-primary float-right create-challenge-submit" type="submit">Create</button>
+	<div class="mb-4">
+		<button class="btn btn-primary float-end create-challenge-submit" type="submit">Create</button>
 	</div>
 	{% endblock %}
 </form>

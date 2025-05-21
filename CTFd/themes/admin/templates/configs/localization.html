@@ -5,15 +5,15 @@
 		) 
 	%}
 	<form method="POST" autocomplete="off" class="w-100">
-		<div class="form-group">
+		<div class="mb-4">
 			{{ form.default_locale.label }}
-			{{ form.default_locale(class="form-control custom-select") }}
+			{{ form.default_locale(class="form-control form-select") }}
 			<small class="form-text text-muted">
 				{{ form.default_locale.description }}
 			</small>
 		</div>
 
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		<button type="submit" class="btn btn-md btn-primary float-end">Update</button>
 	</form>
 	{% endwith %}
 </div>

@@ -2,14 +2,14 @@
 	{% set social_shares = "true" if social_shares == True else "false" %}
 	{% with form = Forms.config.SocialSettingsForm(social_shares=social_shares) %}
 	<form method="POST" autocomplete="off" class="w-100">
-		<div class="form-group">
+		<div class="mb-4">
 			{{ form.social_shares.label }}
 			{{ form.social_shares(class="form-control", value=social_shares) }}
 			<small class="form-text text-muted">
 				{{ form.social_shares.description }}
 			</small>
 		</div>
-		{{ form.submit(class="btn btn-md btn-primary float-right") }}
+		{{ form.submit(class="btn btn-md btn-primary float-end") }}
 	</form>
 	{% endwith %}
 </div>

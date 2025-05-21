@@ -1,6 +1,6 @@
 {% macro render_extra_fields(fields, show_labels=True, show_optionals=True, show_descriptions=True) -%}
     {% for field in fields %}
-    <div class="form-group">
+    <div class="mb-4">
         {% if field.field_type == "text" %}
             {% if show_labels %}
                 {{ field.label }}
@@ -8,7 +8,7 @@
 
             {% if show_optionals %}
                 {% if field.flags.required is false %}
-                    <small class="float-right text-muted">Optional</small>
+                    <small class="float-end text-muted">Optional</small>
                 {% endif %}
             {% endif %}
 
@@ -46,14 +46,14 @@
                 <b>{{ field.label(class="form-label") }}</b>
                 {% if show_optionals %}
                     {% if field.flags.required is false %}
-                        <small class="ml-1 text-muted">
+                        <small class="ms-1 text-muted">
                         {% trans %}(Optional){% endtrans %}
                         </small>
                     {% endif %}
                 {% endif %}
             </div>
         
-            {{ field(class="form-control form-select custom-select") }}
+            {{ field(class="form-control form-select form-select") }}
         
             {% if show_descriptions %}
                 {% if field.description %}

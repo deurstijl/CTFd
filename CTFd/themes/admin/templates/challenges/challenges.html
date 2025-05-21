@@ -6,11 +6,11 @@
 
 
 {% block content %}
-<div class="jumbotron">
+<div class="container-fluid bg-light p-5 text-center mb-4">
 	<div class="container">
 		<h1>Challenges
 			<a class="no-decoration" href="{{ url_for('admin.challenges_new') }}">
-				<span role="button" data-toggle="tooltip" title="Create Challenge">
+				<span role="button" data-bs-toggle="tooltip" title="Create Challenge">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</span>
 			</a>
@@ -30,14 +30,14 @@
 			{% endif %}
 
 			{% with form = Forms.challenges.ChallengeSearchForm(field=field, q=q) %}
-			<form method="GET" class="form-inline">
-				<div class="form-group col-md-2">
-					{{ form.field(class="form-control custom-select w-100") }}
+			<form method="GET" class="d-flex align-items-center gap-2">
+				<div class="mb-4 col-md-2">
+					{{ form.field(class="form-control form-select w-100") }}
 				</div>
-				<div class="form-group col-md-8">
+				<div class="mb-4 col-md-8">
 					{{ form.q(class="form-control w-100", placeholder="Search for matching challenge") }}
 				</div>
-				<div class="form-group col-md-2">
+				<div class="mb-4 col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
 						<i class="fas fa-search" aria-hidden="true"></i>
 					</button>
@@ -51,12 +51,12 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<div class="float-right pb-3">
+			<div class="float-end pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Challenges" id="challenges-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Edit Challenges" id="challenges-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Challenges" id="challenges-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Challenges" id="challenges-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -97,7 +97,7 @@
 							<td class="text-center">{{ challenge.value }}</td>
 							<td class="text-center">{{ challenge.type }}</td>
 							<td class="text-center">
-								{% set badge_state = 'badge-danger' if challenge.state == 'hidden' else 'badge-success' %}
+								{% set badge_state = 'bg-danger' if challenge.state == 'hidden' else 'bg-success' %}
 								<span class="badge {{ badge_state }}">{{ challenge.state }}</span>
 							</td>
 						</tr>
@@ -108,6 +108,41 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="challengesBulkEditModal" tabindex="-1">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<form id="challenges-bulk-edit-form">
+		  <div class="modal-header">
+			<h5 class="modal-title">Edit Challenges</h5>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		  </div>
+		  <div class="modal-body">
+			<div class="mb-3">
+			  <label>Category</label>
+			  <input type="text" name="category" class="form-control" />
+			</div>
+			<div class="mb-3">
+			  <label>Value</label>
+			  <input type="number" name="value" class="form-control" />
+			</div>
+			<div class="mb-3">
+			  <label>State</label>
+			  <select name="state" class="form-select">
+				<option value="">--</option>
+				<option value="visible">Visible</option>
+				<option value="hidden">Hidden</option>
+			  </select>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button type="submit" class="btn btn-primary">Submit</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+		  </div>
+		</form>
+	  </div>
+	</div>
+</div>
+  
 {% endblock %}
 
 {% block scripts %}

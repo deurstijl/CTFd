@@ -7,12 +7,12 @@
 	<form method="POST" autocomplete="off" class="w-100">
 		<ul class="nav nav-tabs mb-3">
 			<li class="nav-item">
-				<a class="nav-link active" href="#user-accounts" aria-controls="user-accounts" role="tab" data-toggle="tab">
+				<a class="nav-link active" href="#user-accounts" aria-controls="user-accounts" role="tab" data-bs-toggle="tab">
 					User Accounts
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#team-accounts" aria-controls="team-accounts" role="tab" data-toggle="tab">
+				<a class="nav-link" href="#team-accounts" aria-controls="team-accounts" role="tab" data-bs-toggle="tab">
 					Team Accounts
 				</a>
 			</li>
@@ -21,7 +21,7 @@
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="user-accounts">
 				<div id="user-accounts">
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.domain_whitelist.label }}
 						{{ form.domain_whitelist(class="form-control", value=domain_whitelist or "") }}
 						<small class="form-text text-muted">
@@ -29,7 +29,7 @@
 						</small>
 					</div>
 
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.domain_blacklist.label }}
 						{{ form.domain_blacklist(class="form-control", value=domain_blacklist or "") }}
 						<small class="form-text text-muted">
@@ -37,15 +37,15 @@
 						</small>
 					</div>
 			
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.verify_emails.label }}
-						{{ form.verify_emails(class="form-control custom-select") }}
+						{{ form.verify_emails(class="form-control form-select") }}
 						<small class="form-text text-muted">
 							{{ form.verify_emails.description }}
 						</small>
 					</div>
 			
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.num_users.label }}
 						{{ form.num_users(class="form-control", value=num_users) }}
 						<small class="form-text text-muted">
@@ -53,7 +53,7 @@
 						</small>
 					</div>
 			
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.incorrect_submissions_per_min.label }}
 						{{ form.incorrect_submissions_per_min(class="form-control", value=incorrect_submissions_per_min) }}
 						<small class="form-text text-muted">
@@ -61,9 +61,9 @@
 						</small>
 					</div>
 			
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.name_changes.label }}
-						{{ form.name_changes(class="form-control custom-select") }}
+						{{ form.name_changes(class="form-control form-select") }}
 						<small class="form-text text-muted">
 							{{ form.name_changes.description }}
 						</small>
@@ -72,7 +72,7 @@
 			</div>
 			<div role="tabpanel" class="tab-pane" id="team-accounts">
 				<div id="team-accounts">
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.team_creation.label }}
 						{{ form.team_creation(class="form-control", value=team_creation) }}
 						<small class="form-text text-muted">
@@ -80,7 +80,7 @@
 						</small>
 					</div>
 			
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.team_size.label }}
 						{{ form.team_size(class="form-control", value=team_size) }}
 						<small class="form-text text-muted">
@@ -88,7 +88,7 @@
 						</small>
 					</div>
 			
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.num_teams.label }}
 						{{ form.num_teams(class="form-control", value=num_teams) }}
 						<small class="form-text text-muted">
@@ -96,7 +96,7 @@
 						</small>
 					</div>
 
-					<div class="form-group">
+					<div class="mb-4">
 						{{ form.team_disbanding.label }}
 						{{ form.team_disbanding(class="form-control", value=team_disbanding) }}
 						<small class="form-text text-muted">
@@ -107,7 +107,7 @@
 			</div>
 		</div>
 
-		{{ form.submit(class="btn btn-md btn-primary float-right") }}
+		{{ form.submit(class="btn btn-md btn-primary float-end") }}
 	</form>
 	{% endwith %}
 </div>

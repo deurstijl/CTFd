@@ -9,7 +9,7 @@
       </thead>
       <tbody>
         <tr v-for="file in files" :key="file.id">
-          <td class="text-left">
+          <td class="text-start">
             <a :href="`${urlRoot}/files/${file.location}`">{{
               file.location.split("/").pop()
             }}</a>
@@ -34,9 +34,9 @@
 
     <div class="col-md-12 mt-3">
       <form method="POST" ref="FileUploadForm" @submit.prevent="addFiles">
-        <div class="form-group">
+        <div class="mb-4">
           <input
-            class="form-control-file"
+            class="form-control"
             id="file"
             multiple=""
             name="file"
@@ -47,9 +47,9 @@
             Attach multiple files using Control+Click or Cmd+Click.
           </sub>
         </div>
-        <div class="form-group">
+        <div class="mb-4">
           <input
-            class="btn btn-success float-right"
+            class="btn btn-success float-end"
             id="_submit"
             name="_submit"
             type="submit"
@@ -90,36 +90,67 @@ export default {
           }
         });
     },
-    addFiles: function () {
-      let data = {
-        challenge: this.$props.challenge_id,
-        type: "challenge",
-      };
-      let form = this.$refs.FileUploadForm;
-      helpers.files.upload(form, data, (_response) => {
-        setTimeout(() => {
+    addFiles: async function () {
+      const form = this.$refs.FileUploadForm;
+      const input = form.querySelector("#file");
+
+      if (!input.files.length) {
+        alert("Please select at least one file.");
+        return;
+      }
+
+      const formData = new FormData();
+      for (let i = 0; i < input.files.length; i++) {
+        formData.append("file", input.files[i]);
+      }
+
+      formData.append("type", "challenge");
+      formData.append("challenge", this.challenge_id);
+      formData.append("nonce", CTFd.config.csrfNonce);
+
+      try {
+        const response = await fetch(`${CTFd.config.urlRoot}/api/v1/files`, {
+          method: "POST",
+          credentials: "same-origin",
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
           this.loadFiles();
-        }, 700);
-      });
+        } else {
+          let msg = "";
+          for (const key in result.errors) {
+            msg += result.errors[key].join("\n") + "\n";
+          }
+          alert("Upload failed:\n" + msg);
+        }
+      } catch (err) {
+        console.error("File upload error:", err);
+        alert("Unexpected error: " + err.message);
+      }
     },
-    deleteFile: function (fileId) {
-      ezQuery({
-        title: "Delete Files",
-        body: "Are you sure you want to delete this file?",
-        success: () => {
-          CTFd.fetch(`/api/v1/files/${fileId}`, {
-            method: "DELETE",
-          })
-            .then((response) => {
-              return response.json();
-            })
-            .then((response) => {
-              if (response.success) {
-                this.loadFiles();
-              }
-            });
-        },
-      });
+    deleteFile(fileId) {
+      const confirmed = confirm("Are you sure you want to delete this file?");
+      if (!confirmed) return;
+
+      CTFd.fetch(`/api/v1/files/${fileId}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          if (response.success) {
+            this.loadFiles();
+          } else {
+            alert("Failed to delete the file.");
+          }
+        })
+        .catch((err) => {
+          console.error("Error deleting file:", err);
+          alert("Unexpected error: " + err.message);
+        });
     },
   },
   created() {

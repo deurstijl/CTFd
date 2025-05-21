@@ -1,0 +1,494 @@
+{
+  "__commonjsHelpers.min.js": {
+    "file": "js/_commonjsHelpers.min.js",
+    "name": "_commonjsHelpers"
+  },
+  "_dayjs.min.min.js": {
+    "file": "js/dayjs.min.min.js",
+    "name": "dayjs.min",
+    "imports": [
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "_index.min.js": {
+    "file": "js/index.min.js",
+    "name": "index",
+    "imports": [
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "_index.min2.js": {
+    "file": "js/index.min2.js",
+    "name": "index"
+  },
+  "_jquery.min.js": {
+    "file": "js/jquery.min.js",
+    "name": "jquery",
+    "imports": [
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "assets/css/challenge-board.scss": {
+    "file": "css/challenge-board.min.css",
+    "src": "assets/css/challenge-board.scss",
+    "isEntry": true
+  },
+  "assets/css/codemirror.scss": {
+    "file": "css/codemirror.min.css",
+    "src": "assets/css/codemirror.scss",
+    "isEntry": true
+  },
+  "assets/css/core.scss": {
+    "file": "css/core-style.min.css",
+    "src": "assets/css/core.scss",
+    "isEntry": true
+  },
+  "assets/css/fonts.scss": {
+    "file": "css/fonts.min.css",
+    "src": "assets/css/fonts.scss",
+    "isEntry": true
+  },
+  "assets/css/main.scss": {
+    "file": "css/main.min.css",
+    "src": "assets/css/main.scss",
+    "isEntry": true
+  },
+  "assets/js/CTFd.js": {
+    "file": "js/core.min.js",
+    "name": "core",
+    "src": "assets/js/CTFd.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery.min.js",
+      "_dayjs.min.min.js",
+      "assets/js/patch.js",
+      "assets/js/fetch.js",
+      "assets/js/config.js",
+      "assets/js/api.js",
+      "assets/js/ezq.js",
+      "assets/js/utils.js",
+      "__commonjsHelpers.min.js",
+      "_index.min.js"
+    ]
+  },
+  "assets/js/api.js": {
+    "file": "js/api.min.js",
+    "name": "api",
+    "src": "assets/js/api.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/fetch.js",
+      "__commonjsHelpers.min.js",
+      "assets/js/config.js"
+    ]
+  },
+  "assets/js/config.js": {
+    "file": "js/config.min.js",
+    "name": "config",
+    "src": "assets/js/config.js",
+    "isEntry": true
+  },
+  "assets/js/events.js": {
+    "file": "js/events.min.js",
+    "name": "events",
+    "src": "assets/js/events.js",
+    "isEntry": true,
+    "imports": [
+      "__commonjsHelpers.min.js",
+      "assets/js/utils.js",
+      "_jquery.min.js"
+    ]
+  },
+  "assets/js/ezq.js": {
+    "file": "js/ezq.min.js",
+    "name": "ezq",
+    "src": "assets/js/ezq.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery.min.js",
+      "_index.min.js",
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "assets/js/fetch.js": {
+    "file": "js/fetch.min.js",
+    "name": "fetch",
+    "src": "assets/js/fetch.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/config.js"
+    ]
+  },
+  "assets/js/graphs.js": {
+    "file": "js/graphs.min.js",
+    "name": "graphs",
+    "src": "assets/js/graphs.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery.min.js",
+      "_index.min2.js",
+      "_dayjs.min.min.js",
+      "assets/js/utils.js",
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "assets/js/helpers.js": {
+    "file": "js/helpers.min.js",
+    "name": "helpers",
+    "src": "assets/js/helpers.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery.min.js",
+      "assets/js/ezq.js",
+      "assets/js/utils.js",
+      "__commonjsHelpers.min.js",
+      "_index.min.js"
+    ]
+  },
+  "assets/js/pages/challenges.js": {
+    "file": "js/pages/challenges.min.js",
+    "name": "pages/challenges",
+    "src": "assets/js/pages/challenges.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js",
+      "assets/js/ezq.js",
+      "assets/js/styles.js",
+      "assets/js/utils.js",
+      "_dayjs.min.min.js",
+      "__commonjsHelpers.min.js",
+      "_index.min.js",
+      "assets/js/CTFd.js",
+      "assets/js/config.js",
+      "_jquery.min.js",
+      "assets/js/times.js",
+      "assets/js/events.js",
+      "assets/js/helpers.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js"
+    ]
+  },
+  "assets/js/pages/events.js": {
+    "file": "js/pages/events.min.js",
+    "name": "pages/events",
+    "src": "assets/js/pages/events.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery.min.js",
+      "assets/js/events.js",
+      "assets/js/config.js",
+      "__commonjsHelpers.min.js",
+      "assets/js/utils.js"
+    ]
+  },
+  "assets/js/pages/main.js": {
+    "file": "js/pages/main.min.js",
+    "name": "pages/main",
+    "src": "assets/js/pages/main.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/styles.js",
+      "assets/js/CTFd.js",
+      "_jquery.min.js",
+      "_dayjs.min.min.js",
+      "assets/js/times.js",
+      "__commonjsHelpers.min.js",
+      "assets/js/events.js",
+      "assets/js/config.js",
+      "assets/js/helpers.js",
+      "_index.min.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js",
+      "assets/js/ezq.js",
+      "assets/js/utils.js"
+    ]
+  },
+  "assets/js/pages/notifications.js": {
+    "file": "js/pages/notifications.min.js",
+    "name": "pages/notifications",
+    "src": "assets/js/pages/notifications.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js",
+      "_jquery.min.js",
+      "assets/js/utils.js",
+      "assets/js/styles.js",
+      "_index.min.js",
+      "__commonjsHelpers.min.js",
+      "assets/js/CTFd.js",
+      "_dayjs.min.min.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js",
+      "assets/js/config.js",
+      "assets/js/ezq.js",
+      "assets/js/times.js",
+      "assets/js/events.js",
+      "assets/js/helpers.js"
+    ]
+  },
+  "assets/js/pages/scoreboard.js": {
+    "file": "js/pages/scoreboard.min.js",
+    "name": "pages/scoreboard",
+    "src": "assets/js/pages/scoreboard.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js",
+      "_jquery.min.js",
+      "assets/js/CTFd.js",
+      "_index.min2.js",
+      "_dayjs.min.min.js",
+      "assets/js/utils.js",
+      "assets/js/styles.js",
+      "_index.min.js",
+      "__commonjsHelpers.min.js",
+      "assets/js/times.js",
+      "assets/js/events.js",
+      "assets/js/config.js",
+      "assets/js/helpers.js",
+      "assets/js/ezq.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js"
+    ]
+  },
+  "assets/js/pages/settings.js": {
+    "file": "js/pages/settings.min.js",
+    "name": "pages/settings",
+    "src": "assets/js/pages/settings.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js",
+      "assets/js/utils.js",
+      "assets/js/CTFd.js",
+      "assets/js/styles.js",
+      "_index.min.js",
+      "__commonjsHelpers.min.js",
+      "_jquery.min.js",
+      "_dayjs.min.min.js",
+      "assets/js/times.js",
+      "assets/js/events.js",
+      "assets/js/config.js",
+      "assets/js/helpers.js",
+      "assets/js/ezq.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js"
+    ]
+  },
+  "assets/js/pages/setup.js": {
+    "file": "js/pages/setup.min.js",
+    "name": "pages/setup",
+    "src": "assets/js/pages/setup.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js",
+      "_jquery.min.js",
+      "_dayjs.min.min.js",
+      "assets/js/CTFd.js",
+      "assets/js/styles.js",
+      "_index.min.js",
+      "__commonjsHelpers.min.js",
+      "assets/js/times.js",
+      "assets/js/events.js",
+      "assets/js/utils.js",
+      "assets/js/config.js",
+      "assets/js/helpers.js",
+      "assets/js/ezq.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js"
+    ]
+  },
+  "assets/js/pages/stats.js": {
+    "file": "js/pages/stats.min.js",
+    "name": "pages/stats",
+    "src": "assets/js/pages/stats.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js",
+      "_jquery.min.js",
+      "assets/js/CTFd.js",
+      "assets/js/graphs.js",
+      "assets/js/styles.js",
+      "_index.min.js",
+      "__commonjsHelpers.min.js",
+      "_dayjs.min.min.js",
+      "assets/js/times.js",
+      "assets/js/events.js",
+      "assets/js/utils.js",
+      "assets/js/config.js",
+      "assets/js/helpers.js",
+      "assets/js/ezq.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js",
+      "_index.min2.js"
+    ]
+  },
+  "assets/js/pages/style.js": {
+    "file": "js/pages/style.min.js",
+    "name": "pages/style",
+    "src": "assets/js/pages/style.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery.min.js",
+      "assets/js/styles.js",
+      "assets/js/times.js",
+      "__commonjsHelpers.min.js",
+      "_index.min.js",
+      "_dayjs.min.min.js"
+    ]
+  },
+  "assets/js/pages/teams/private.js": {
+    "file": "js/pages/teams/private.min.js",
+    "name": "pages/teams/private",
+    "src": "assets/js/pages/teams/private.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/pages/main.js",
+      "assets/js/utils.js",
+      "assets/js/CTFd.js",
+      "assets/js/ezq.js",
+      "_jquery.min.js",
+      "assets/js/styles.js",
+      "_index.min.js",
+      "__commonjsHelpers.min.js",
+      "_dayjs.min.min.js",
+      "assets/js/times.js",
+      "assets/js/events.js",
+      "assets/js/config.js",
+      "assets/js/helpers.js",
+      "assets/js/patch.js",
+      "assets/js/api.js",
+      "assets/js/fetch.js"
+    ]
+  },
+  "assets/js/patch.js": {
+    "file": "js/patch.min.js",
+    "name": "patch",
+    "src": "assets/js/patch.js",
+    "isEntry": true,
+    "imports": [
+      "assets/js/api.js",
+      "assets/js/fetch.js",
+      "assets/js/config.js",
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "assets/js/styles.js": {
+    "file": "js/styles.min.js",
+    "name": "styles",
+    "src": "assets/js/styles.js",
+    "isEntry": true,
+    "imports": [
+      "_index.min.js",
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "assets/js/times.js": {
+    "file": "js/times.min.js",
+    "name": "times",
+    "src": "assets/js/times.js",
+    "isEntry": true,
+    "imports": [
+      "_dayjs.min.min.js",
+      "__commonjsHelpers.min.js",
+      "_jquery.min.js"
+    ]
+  },
+  "assets/js/utils.js": {
+    "file": "js/utils.min.js",
+    "name": "utils",
+    "src": "assets/js/utils.js",
+    "isEntry": true,
+    "imports": [
+      "_jquery.min.js",
+      "__commonjsHelpers.min.js"
+    ]
+  },
+  "assets/js/vendor.js": {
+    "file": "js/vendor.bundle.min.js",
+    "name": "vendor.bundle",
+    "src": "assets/js/vendor.js",
+    "isEntry": true
+  },
+  "node_modules/@fontsource/lato/files/lato-latin-400-normal.woff": {
+    "file": "assets/lato-latin-400-normal.woff",
+    "src": "node_modules/@fontsource/lato/files/lato-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/lato/files/lato-latin-400-normal.woff2": {
+    "file": "assets/lato-latin-400-normal.woff2",
+    "src": "node_modules/@fontsource/lato/files/lato-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/lato/files/lato-latin-ext-400-normal.woff2": {
+    "file": "assets/lato-latin-ext-400-normal.woff2",
+    "src": "node_modules/@fontsource/lato/files/lato-latin-ext-400-normal.woff2"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-cyrillic-400-normal.woff": {
+    "file": "assets/raleway-cyrillic-400-normal.woff",
+    "src": "node_modules/@fontsource/raleway/files/raleway-cyrillic-400-normal.woff"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-cyrillic-400-normal.woff2": {
+    "file": "assets/raleway-cyrillic-400-normal.woff2",
+    "src": "node_modules/@fontsource/raleway/files/raleway-cyrillic-400-normal.woff2"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-cyrillic-ext-400-normal.woff": {
+    "file": "assets/raleway-cyrillic-ext-400-normal.woff",
+    "src": "node_modules/@fontsource/raleway/files/raleway-cyrillic-ext-400-normal.woff"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-cyrillic-ext-400-normal.woff2": {
+    "file": "assets/raleway-cyrillic-ext-400-normal.woff2",
+    "src": "node_modules/@fontsource/raleway/files/raleway-cyrillic-ext-400-normal.woff2"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-latin-400-normal.woff": {
+    "file": "assets/raleway-latin-400-normal.woff",
+    "src": "node_modules/@fontsource/raleway/files/raleway-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-latin-400-normal.woff2": {
+    "file": "assets/raleway-latin-400-normal.woff2",
+    "src": "node_modules/@fontsource/raleway/files/raleway-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-latin-ext-400-normal.woff": {
+    "file": "assets/raleway-latin-ext-400-normal.woff",
+    "src": "node_modules/@fontsource/raleway/files/raleway-latin-ext-400-normal.woff"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-latin-ext-400-normal.woff2": {
+    "file": "assets/raleway-latin-ext-400-normal.woff2",
+    "src": "node_modules/@fontsource/raleway/files/raleway-latin-ext-400-normal.woff2"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-vietnamese-400-normal.woff": {
+    "file": "assets/raleway-vietnamese-400-normal.woff",
+    "src": "node_modules/@fontsource/raleway/files/raleway-vietnamese-400-normal.woff"
+  },
+  "node_modules/@fontsource/raleway/files/raleway-vietnamese-400-normal.woff2": {
+    "file": "assets/raleway-vietnamese-400-normal.woff2",
+    "src": "node_modules/@fontsource/raleway/files/raleway-vietnamese-400-normal.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
+    "file": "assets/fa-brands-400.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
+    "file": "assets/fa-brands-400.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": {
+    "file": "assets/fa-regular-400.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": {
+    "file": "assets/fa-regular-400.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": {
+    "file": "assets/fa-solid-900.ttf",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": {
+    "file": "assets/fa-solid-900.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2"
+  }
+}

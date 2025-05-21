@@ -1,23 +1,23 @@
 <template>
   <div>
-    <div>
-      <HintCreationForm
-        ref="HintCreationForm"
-        :challenge_id="challenge_id"
-        :hints="hints"
-        @refreshHints="refreshHints"
-      />
-    </div>
+    <!-- Hint creation modal -->
+    <HintCreationForm
+      :challenge_id="challenge_id"
+      :visible="showCreateModal"
+      :hints="hints"
+      @refreshHints="refreshHints"
+      @close="showCreateModal = false"
+    />
 
-    <div>
-      <HintEditForm
-        ref="HintEditForm"
-        :challenge_id="challenge_id"
-        :hint_id="editing_hint_id"
-        :hints="hints"
-        @refreshHints="refreshHints"
-      />
-    </div>
+    <!-- Hint edit modal -->
+    <HintEditForm
+      :challenge_id="challenge_id"
+      :hint_id="editing_hint_id"
+      :visible="showEditModal"
+      :hints="hints"
+      @refreshHints="refreshHints"
+      @close="closeEditModal"
+    />
 
     <table class="table table-striped">
       <thead>
@@ -52,8 +52,9 @@
         </tr>
       </tbody>
     </table>
+
     <div class="col-md-12">
-      <button class="btn btn-success float-right" @click="addHint">
+      <button class="btn btn-success float-end" @click="addHint">
         Create Hint
       </button>
     </div>
@@ -61,8 +62,8 @@
 </template>
 
 <script>
-import { ezQuery } from "../../compat/ezq";
 import CTFd from "../../compat/CTFd";
+import { ezQuery } from "../../compat/ezq";
 import HintCreationForm from "./HintCreationForm.vue";
 import HintEditForm from "./HintEditForm.vue";
 
@@ -74,16 +75,18 @@ export default {
   props: {
     challenge_id: Number,
   },
-  data: function () {
+  data() {
     return {
       hints: [],
       editing_hint_id: null,
+      showCreateModal: false,
+      showEditModal: false,
     };
   },
   methods: {
-    loadHints: async function () {
-      let result = await CTFd.fetch(
-        `/api/v1/challenges/${this.$props.challenge_id}/hints`,
+    async loadHints() {
+      const result = await CTFd.fetch(
+        `/api/v1/challenges/${this.challenge_id}/hints`,
         {
           method: "GET",
           credentials: "same-origin",
@@ -91,62 +94,64 @@ export default {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
-        },
-      );
-      let response = await result.json();
-      this.hints = response.data;
-      return response.success;
-    },
-    addHint: function () {
-      let modal = this.$refs.HintCreationForm.$el;
-      $(modal).modal();
-    },
-    editHint: function (hintId) {
-      this.editing_hint_id = hintId;
-      let modal = this.$refs.HintEditForm.$el;
-      $(modal).modal();
-    },
-    refreshHints: function (caller) {
-      this.loadHints().then((success) => {
-        if (success) {
-          let modal;
-          switch (caller) {
-            case "HintCreationForm":
-              modal = this.$refs.HintCreationForm.$el;
-              console.log(modal);
-              $(modal).modal("hide");
-              break;
-            case "HintEditForm":
-              modal = this.$refs.HintEditForm.$el;
-              $(modal).modal("hide");
-              break;
-            default:
-              break;
-          }
-        } else {
-          alert(
-            "An error occurred while updating this hint. Please try again.",
-          );
         }
-      });
+      );
+
+      const response = await result.json();
+      if (response.success) {
+        this.hints = response.data;
+        return true;
+      } else {
+        return false;
+      }
     },
-    deleteHint: function (hintId) {
-      ezQuery({
-        title: "Delete Hint",
-        body: "Are you sure you want to delete this hint?",
-        success: () => {
-          CTFd.fetch(`/api/v1/hints/${hintId}`, {
-            method: "DELETE",
-          })
-            .then((response) => {
-              return response.json();
-            })
-            .then((data) => {
-              if (data.success) {
-                this.loadHints();
-              }
-            });
-        },
+
+    addHint() {
+      this.showCreateModal = true;
+    },
+
+    editHint(hintId) {
+      this.editing_hint_id = hintId;
+      this.showEditModal = true;
+    },
+
+    closeEditModal() {
+      this.editing_hint_id = null;
+      this.showEditModal = false;
+    },
+
+    async refreshHints(caller) {
+      const success = await this.loadHints();
+      if (!success) {
+        alert("An error occurred while updating this hint. Please try again.");
+      }
+
+      // Auto-close the relevant modal
+      if (caller === "HintCreationForm") {
+        this.showCreateModal = false;
+      } else if (caller === "HintEditForm") {
+        this.closeEditModal();
+      }
+    },
+
+    deleteHint(hintId) {
+    if (!confirm("Are you sure you want to delete this hint?")) return;
+
+    CTFd.fetch(`/api/v1/hints/${hintId}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          this.loadHints();
+        } else {
+          alert("Failed to delete the hint.");
+        }
+      })
+      .catch((err) => {
+        console.error("Hint deletion failed:", err);
+        alert("Unexpected error: " + err.message);
       });
     },
   },

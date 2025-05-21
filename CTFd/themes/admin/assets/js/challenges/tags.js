@@ -29,7 +29,7 @@ export function addTag(event) {
   CTFd.api.post_tag_list({}, params).then((response) => {
     if (response.success) {
       const tpl =
-        "<span class='badge badge-primary mx-1 challenge-tag'>" +
+        "<span class='badge bg-primary mx-1 challenge-tag'>" +
         "<span>{0}</span>" +
         "<a class='btn-fa delete-tag' tag-id='{1}'>&times;</a></span>";
       const tag = $(tpl.format(response.data.value, response.data.id));

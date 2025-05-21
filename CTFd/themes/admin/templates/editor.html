@@ -1,7 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block stylesheets %}
-<style>
+<style nonce="{{csp_nonce}}">
 .CodeMirror {
 	height: 100%;
 }
@@ -27,7 +27,7 @@
 			{% set format = page.format if page is defined %}
 			{% with form = Forms.pages.PageEditForm(content=content, format=format) %}
 			<form id="page-edit" method="POST">
-				<div class="form-group">
+				<div class="mb-4">
 					<div class="row">
 						<div class="col-md-12">
 							{% set title = page.title if page is defined %}
@@ -40,7 +40,7 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<div class="mb-4">
 					<div class="row">
 						<div class="col-md-12">
 							{% set route = page.route if page is defined %}
@@ -53,18 +53,18 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<div class="mb-4">
 					<div class="row">
 						<div class="col-md-6">
 							<b>{{ form.format.label }}</b>
-							{{ form.format(class="form-control custom-select", value=format) }}
+							{{ form.format(class="form-control form-select", value=format) }}
 							<small class="text-muted">
 								{{ form.format.description }}
 							</small>
 						</div>
 						<div class="col-md-6">
 							<b>{{ form.link_target.label }}</b>
-							{{ form.link_target(class="form-control custom-select", placeholder="Target", value=format) }}
+							{{ form.link_target(class="form-control form-select", placeholder="Target", value=format) }}
 							<small class="text-muted">
 								{{ form.link_target.description }}
 							</small>
@@ -74,7 +74,7 @@
 
 				<hr>
 
-				<div class="form-group">
+				<div class="mb-4">
 					<div class="row">
 						<div class="col-md-12">
 
@@ -84,7 +84,7 @@
 							<ul class="nav nav-tabs" role="tablist" id="content-edit">
 								<li class="nav-item" role="presentation" class="active">
 									<a class="nav-link active" href="#content-write" aria-controls="home" role="tab"
-									data-toggle="tab">Write</a>
+									data-bs-toggle="tab">Write</a>
 								</li>
 								<li class="nav-item" role="presentation">
 									<a class="nav-link preview-page" href="#">Preview</a>
@@ -92,10 +92,10 @@
 							</ul>
 
 							<div class="tab-content">
-								<div role="tabpanel" class="tab-pane active" id="content-write" style="height:600px">
+								<div role="tabpanel" class="tab-pane active h600px" id="content-write">
 									<br>
 
-									<div class="form-inline">
+									<div class="d-flex align-items-center gap-2">
 										<div class="btn-group btn-group-sm">
 											<div class="btn-group">
 												<button type="button" class="btn btn-primary" id="media-button">
@@ -107,19 +107,19 @@
 
 										<span class="nav-link d-none d-md-block d-lg-block">|</span>
 
-										<div class="form-group pr-3">
+										<div class="mb-4 pe-3">
 											{% set draft = page is defined and page.draft == True %}
 											{{ form.draft(class="form-check-input", checked=draft) }}
 											{{ form.draft.label(class="form-check-label") }}
 										</div>
 
-										<div class="form-group pr-3">
+										<div class="mb-4 pe-3">
 											{% set hidden = page is defined and page.hidden == True %}
 											{{ form.hidden(class="form-check-input", checked=hidden) }}
 											{{ form.hidden.label(class="form-check-label") }}
 										</div>
 
-										<div class="form-group pr-3">
+										<div class="mb-4 pe-3">
 											{% set auth_required = page is defined and page.auth_required == True %}
 											{{ form.auth_required(class="form-check-input", checked=auth_required) }}
 											{{ form.auth_required.label(class="form-check-label") }}
@@ -128,16 +128,16 @@
 
 									<br>
 
-									<small class="form-text text-muted text-right">
+									<small class="form-text text-muted text-end">
 										<a href="https://docs.ctfd.io/docs/pages/variables/" target="_blank">CTFd Page variables</a>
-										<i class="far fa-question-circle pr-2"></i>
+										<i class="far fa-question-circle pe-2"></i>
 									</small>
 
-									<div class="form-group h-100">
+									<div class="mb-4 h-100">
 										{{ form.content(id="admin-pages-editor", class="d-none") }}
 									</div>
 
-									<div class="form-group float-right pt-3">
+									<div class="mb-4 float-end pt-3">
 										{{ form.nonce() }}
 										<button class="btn btn-primary" id="save-page">
 											Save

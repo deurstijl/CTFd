@@ -2,16 +2,16 @@
   <div class="col-md-12">
     <div id="challenge-tags" class="my-3">
       <span
-        class="badge badge-primary mx-1 challenge-tag"
+        class="badge bg-primary mx-1 challenge-tag"
         v-for="tag in tags"
         :key="tag.id"
       >
         <span>{{ tag.value }}</span>
-        <a class="btn-fa delete-tag" @click="deleteTag(tag.id)"> &#215;</a>
+        <a class="btn-fa delete-tag text-white" @click="deleteTag(tag.id)"> &#215;</a>
       </span>
     </div>
 
-    <div class="form-group">
+    <div class="mb-4">
       <label
         >Tag
         <br />

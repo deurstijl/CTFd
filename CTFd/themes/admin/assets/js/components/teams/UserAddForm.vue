@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="form-group">
+    <div class="mb-4">
       <label>Search Users</label>
       <input
         type="text"
@@ -12,9 +12,9 @@
         @keyup.enter="selectUser()"
       />
     </div>
-    <div class="form-group">
+    <div class="mb-4">
       <span
-        class="badge badge-primary mr-1"
+        class="badge bg-primary mr-1"
         v-for="user in selectedUsers"
         :key="user.id"
       >
@@ -22,7 +22,7 @@
         <a class="btn-fa" @click="removeSelectedUser(user.id)"> &#215;</a>
       </span>
     </div>
-    <div class="form-group">
+    <div class="mb-4">
       <div
         class="text-center"
         v-if="
@@ -47,7 +47,7 @@
           <small
             v-if="user.team_id"
             :class="{
-              'float-right': true,
+              'float-end': true,
               'text-white': idx === selectedResultIdx,
               'text-muted': idx !== selectedResultIdx,
             }"
@@ -57,9 +57,9 @@
         </li>
       </ul>
     </div>
-    <div class="form-group">
+    <div class="mb-4">
       <button
-        class="btn btn-success d-inline-block float-right"
+        class="btn btn-success d-inline-block float-end"
         @click="addUsers()"
       >
         Add Users

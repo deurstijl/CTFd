@@ -16,54 +16,72 @@ import TagsList from "../components/tags/TagsList.vue";
 import ChallengeFilesList from "../components/files/ChallengeFilesList.vue";
 import HintsList from "../components/hints/HintsList.vue";
 import NextChallenge from "../components/next/NextChallenge.vue";
+import Modal from "bootstrap/js/dist/modal";
+import { loadScript } from "../compat/helpers";
 
 function loadChalTemplate(challenge) {
   CTFd._internal.challenge = {};
-  $.getScript(CTFd.config.urlRoot + challenge.scripts.view, function () {
-    let template_data = challenge.create;
-    $("#create-chal-entry-div").html(template_data);
-    bindMarkdownEditors();
 
-    $.getScript(CTFd.config.urlRoot + challenge.scripts.create, function () {
-      $("#create-chal-entry-div form").submit(function (event) {
-        event.preventDefault();
-        const params = $("#create-chal-entry-div form").serializeJSON();
-        CTFd.fetch("/api/v1/challenges", {
-          method: "POST",
-          credentials: "same-origin",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(params),
-        })
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (response) {
-            if (response.success) {
-              $("#challenge-create-options #challenge_id").val(
-                response.data.id,
-              );
-              $("#challenge-create-options").modal();
+  loadScript(CTFd.config.urlRoot + challenge.scripts.view)
+    .then(() => {
+      const templateData = challenge.create;
+      const entryDiv = document.querySelector("#create-chal-entry-div");
+      if (entryDiv) {
+        entryDiv.innerHTML = templateData;
+      }
+
+      if (typeof bindMarkdownEditors === "function") {
+        bindMarkdownEditors();
+      }
+
+      return loadScript(CTFd.config.urlRoot + challenge.scripts.create);
+    })
+    .then(() => {
+      const form = document.querySelector("#create-chal-entry-div form");
+      if (form){
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+        
+          const formData = new FormData(form);
+          const params = Object.fromEntries(formData.entries());
+        
+          try {
+            const response = await CTFd.fetch("/api/v1/challenges", {
+              method: "POST",
+              credentials: "same-origin",
+              headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(params),
+            });
+        
+            const result = await response.json();
+        
+            if (result.success) {
+              // ✅ Redirect to the new challenge page
+              const challengeId = result.data.id;
+              window.location = `${CTFd.config.urlRoot}/admin/challenges/${challengeId}`;
             } else {
               let body = "";
-              for (const k in response.errors) {
-                body += response.errors[k].join("\n");
-                body += "\n";
+              for (const key in result.errors) {
+                body += result.errors[key].join("\n") + "\n";
               }
-
-              ezAlert({
-                title: "Error",
-                body: body,
-                button: "OK",
-              });
+        
+              alert(body);
             }
-          });
-      });
+          } catch (err) {
+            console.error("Challenge creation failed:", err);
+            alert(err.message);
+          }
+        });
+      }
+    })
+    .catch((err) => {
+      console.error("Error in loadChalTemplate:", err);
     });
-  });
 }
+
 
 function handleChallengeOptions(event) {
   event.preventDefault();
@@ -146,36 +164,47 @@ $(() => {
     $("#challenge-modal").modal();
   });
 
-  $(".comments-challenge").click(function (_event) {
-    $("#challenge-comments-window").modal();
+  // $(".comments-challenge").click(function (_event) {
+  //   $("#challenge-comments-window").modal();
+  // });
+
+  document.querySelector(".comments-challenge")?.addEventListener("click", () => {
+    const modalElement = document.getElementById("challenge-comments-window");
+  
+    if (modalElement) {
+      // Mount Vue component if not already mounted
+      const mountTarget = document.querySelector("#comment-box");
+      const modal = new Modal(modalElement);
+      modal.show();
+    }
   });
 
-  $(".delete-challenge").click(function (_e) {
-    ezQuery({
-      title: "Delete Challenge",
-      body: `Are you sure you want to delete <strong>${htmlEntities(
-        window.CHALLENGE_NAME,
-      )}</strong>`,
-      success: function () {
-        CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID, {
-          method: "DELETE",
+  document.querySelector(".delete-challenge")?.addEventListener("click", function () {
+    const name = window.CHALLENGE_NAME || "this challenge";
+    const confirmed = confirm(`Are you sure you want to delete "${name}"?`);
+  
+    if (confirmed) {
+      CTFd.fetch(`/api/v1/challenges/${window.CHALLENGE_ID}`, {
+        method: "DELETE",
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.success) {
+            window.location = `${CTFd.config.urlRoot}/admin/challenges`;
+          } else {
+            alert("Failed to delete the challenge.");
+          }
         })
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (response) {
-            if (response.success) {
-              window.location = CTFd.config.urlRoot + "/admin/challenges";
-            }
-          });
-      },
-    });
+        .catch((err) => {
+          console.error("Delete failed:", err);
+          alert("Unexpected error: " + err.message);
+        });
+    }
   });
 
   $("#challenge-update-container > form").submit(function (e) {
     e.preventDefault();
     var params = $(e.target).serializeJSON(true);
-
     CTFd.fetch("/api/v1/challenges/" + window.CHALLENGE_ID + "/flags", {
       method: "GET",
       credentials: "same-origin",
@@ -207,43 +236,33 @@ $(() => {
                 switch (response.data.state) {
                   case "visible":
                     $(".challenge-state")
-                      .removeClass("badge-danger")
-                      .addClass("badge-success");
+                      .removeClass("bg-danger")
+                      .addClass("bg-success");
                     break;
                   case "hidden":
                     $(".challenge-state")
-                      .removeClass("badge-success")
-                      .addClass("badge-danger");
+                      .removeClass("bg-success")
+                      .addClass("bg-danger");
                     break;
                   default:
                     break;
                 }
-                ezToast({
-                  title: "Success",
-                  body: "Your challenge has been updated!",
-                });
+                alert("Your challenge has been updated!");
               } else {
                 let body = "";
                 for (const k in response.errors) {
                   body += response.errors[k].join("\n");
                   body += "\n";
                 }
-
-                ezAlert({
-                  title: "Error",
-                  body: body,
-                  button: "OK",
-                });
+                alert(body);
               }
             });
         };
         // Check if the challenge doesn't have any flags before marking visible
         if (response.data.length === 0 && params.state === "visible") {
-          ezQuery({
-            title: "Missing Flags",
-            body: "This challenge does not have any flags meaning it may be unsolveable. Are you sure you'd like to update this challenge?",
-            success: update_challenge,
-          });
+          if (confirm("This challenge does not have any flags meaning it may be unsolveable. Are you sure you'd like to update this challenge?")){
+            update_challenge();
+          };
         } else {
           update_challenge();
         }

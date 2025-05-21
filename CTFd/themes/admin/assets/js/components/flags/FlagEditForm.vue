@@ -1,5 +1,13 @@
 <template>
-  <div id="flag-edit-modal" class="modal fade" tabindex="-1">
+  <div
+    id="flag-edit-modal"
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    :class="{ show: visible }"
+    :style="{ display: visible ? 'block' : 'none' }"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header text-center">
@@ -13,12 +21,13 @@
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
+            @click="$emit('close')"
             aria-label="Close"
           >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+
         <div class="modal-body">
           <component
             v-if="flag && selectedTypeComponent"
@@ -42,6 +51,7 @@ export default {
   name: "FlagEditForm",
   props: {
     flag_id: Number,
+    visible: Boolean,
   },
   components: {
     StaticFlagForm,
@@ -66,13 +76,10 @@ export default {
     },
   },
   watch: {
-    flag_id: {
-      immediate: true,
-      handler(val) {
-        if (val !== null) {
-          this.loadFlag();
-        }
-      },
+    visible(newVal) {
+      if (newVal && this.flag_id != null) {
+        this.loadFlag();
+      }
     },
   },
   methods: {
@@ -83,6 +90,9 @@ export default {
         .then((res) => res.json())
         .then((res) => {
           this.flag = res.data;
+        })
+        .catch((err) => {
+          console.error("Failed to load flag:", err);
         });
     },
     updateFlag(params) {
@@ -96,12 +106,35 @@ export default {
         body: JSON.stringify(params),
       })
         .then((response) => response.json())
-        .then((_response) => {
-          this.$emit("refreshFlags", this.$options.name);
+        .then((response) => {
+          if (response.success) {
+            this.$emit("refreshFlags", this.$options.name);
+            this.$emit("close");
+            this.flag = null;
+          } else {
+            let msg = "";
+            for (const key in response.errors) {
+              msg += response.errors[key].join("\n") + "\n";
+            }
+            alert("Error updating flag:\n" + msg);
+          }
+        })
+        .catch((err) => {
+          console.error("Error updating flag:", err);
+          alert("Unexpected error: " + err.message);
         });
     },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: opacity 0.15s linear;
+}
+.modal.show {
+  opacity: 1;
+  display: block !important;
+}
+</style>

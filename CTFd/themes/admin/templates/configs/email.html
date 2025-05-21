@@ -6,31 +6,31 @@
 		</small>
 		<ul class="nav nav-tabs mt-3" role="tablist">
 			<li class="nav-item active">
-				<a class="nav-link active" href="#email-server-tab" role="tab" data-toggle="tab">
+				<a class="nav-link active" href="#email-server-tab" role="tab" data-bs-toggle="tab">
 					Mail Server
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#registration-email-tab" role="tab" data-toggle="tab">
+				<a class="nav-link" href="#registration-email-tab" role="tab" data-bs-toggle="tab">
 					Registration
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#verification-email-tab" role="tab" data-toggle="tab">
+				<a class="nav-link" href="#verification-email-tab" role="tab" data-bs-toggle="tab">
 					Verification
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#account-details-email-tab" role="tab" data-toggle="tab">Account Details</a>
+				<a class="nav-link" href="#account-details-email-tab" role="tab" data-bs-toggle="tab">Account Details</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="#password-reset-email-tab" role="tab" data-toggle="tab">Password Reset</a>
+				<a class="nav-link" href="#password-reset-email-tab" role="tab" data-bs-toggle="tab">Password Reset</a>
 			</li>
 		</ul>
 
 		<div class="tab-content">
 			<div role="tabpanel" class="tab-pane active" id="email-server-tab">
-				<div class="form-group">
+				<div class="mb-4">
 					<label class="pt-3">
 						Mail From Address<br>
 						<small class="form-text text-muted">
@@ -39,7 +39,7 @@
 					</label>
 					<input class="form-control" id='mailfrom_addr' name='mailfrom_addr' type='text' {% if mailfrom_addr is defined and mailfrom_addr != None %}value="{{ mailfrom_addr }}"{% endif %}>
 				</div>
-				<div class="form-group">
+				<div class="mb-4">
 					<label>
 						Mail Server Address
 						<br>
@@ -47,13 +47,13 @@
 							Change the email server used by CTFd to send email
 						</small>
 					</label>
-					<a class="float-right" href="https://docs.ctfd.io/docs/settings/emails#email-server" target="_blank">
-						<i class="far fa-question-circle pr-2"></i>
+					<a class="float-end" href="https://docs.ctfd.io/docs/settings/emails#email-server" target="_blank">
+						<i class="far fa-question-circle pe-2"></i>
 					</a>
 					<input class="form-control" id='mail_server' name='mail_server' type='text'
 						{% if mail_server is defined and mail_server != None %}value="{{ mail_server }}"{% endif %}>
 				</div>
-				<div class="form-group">
+				<div class="mb-4">
 					<label>
 						Mail Server Port<br>
 						<small class="form-text text-muted">
@@ -71,7 +71,7 @@
 					</label>
 				</div>
 				<div id="mail_username_password">
-					<div class="form-group">
+					<div class="mb-4">
 						<label>
 							Username<br>
 							<small class="form-text text-muted">
@@ -85,7 +85,7 @@
 						{% endif %}
 						<input class="form-control" id='mail_username' name='mail_username' autocomplete='off' type='text'>
 					</div>
-					<div class="form-group">
+					<div class="mb-4">
 						<label for="mail_password">
 							Password<br>
 							<small class="form-text text-muted">
@@ -118,7 +118,7 @@
 				<div class="alert alert-warning" role="alert">
 					Mailgun integration is deprecated! Please see your Mailgun account for SMTP credentials.
 				</div>
-				<div class="form-group">
+				<div class="mb-4">
 					<label>
 						Mailgun API Base URL<br>
 						<small class="form-text text-muted">
@@ -128,7 +128,7 @@
 					<input class="form-control" id='mailgun_base_url' name='mailgun_base_url' type='text'
 						{% if mailgun_base_url is defined and mailgun_base_url != None %}value="{{ mailgun_base_url }}"{% endif %}>
 				</div>
-				<div class="form-group">
+				<div class="mb-4">
 					<label>
 						Mailgun API Key<br>
 						<small class="form-text text-muted">
@@ -140,7 +140,7 @@
 				</div>
 			</div>
 			<div role="tabpanel" class="tab-pane" id="registration-email-tab">
-				<div class="form-group">
+				<div class="mb-4">
 					<label class="pt-3">
 						Account Registration<br>
 						<small class="form-text text-muted">
@@ -163,7 +163,7 @@
 			</div>
 
 			<div role="tabpanel" class="tab-pane" id="verification-email-tab">
-				<div class="form-group">
+				<div class="mb-4">
 					<label class="pt-3">
 						Account Verification<br>
 						<small class="form-text text-muted">
@@ -185,7 +185,7 @@
 			</div>
 
 			<div role="tabpanel" class="tab-pane" id="account-details-email-tab">
-				<div class="form-group">
+				<div class="mb-4">
 					<label class="pt-3">
 						New Account Details<br>
 						<small class="form-text text-muted">
@@ -208,7 +208,7 @@
 			</div>
 
 			<div role="tabpanel" class="tab-pane" id="password-reset-email-tab">
-				<div class="form-group">
+				<div class="mb-4">
 					<label class="pt-3">
 						Password Reset Request<br>
 						<small class="form-text text-muted">
@@ -229,7 +229,7 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<div class="mb-4">
 					<label class="pt-3">
 						Password Reset Confirmation<br>
 						<small class="form-text text-muted">
@@ -253,6 +253,6 @@
 		</div>
 
 		
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		<button type="submit" class="btn btn-md btn-primary float-end">Update</button>
 	</form>
 </div>

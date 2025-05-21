@@ -1,38 +1,36 @@
-import "bootstrap/dist/js/bootstrap.bundle";
-import $ from "jquery";
+import { Modal, Tooltip, Tab } from "bootstrap";
 import EasyMDE from "easymde";
-//import Vue from "vue";
 import * as Vue from "vue";
 import MediaLibrary from "./components/files/MediaLibrary.vue";
 import hljs from "highlight.js";
 
+// Show MediaLibrary Vue component
 export function showMediaLibrary(editor) {
-  // const mediaModal = Vue.extend(MediaLibrary);
-
-  // Create an empty div and append it to our <main>
-  let vueContainer = document.createElement("div");
+  const vueContainer = document.createElement("div");
   document.querySelector("main").appendChild(vueContainer);
 
-  // Create MediaLibrary component and pass it our editor
-  Vue.createApp({
-    render: () => Vue.h(MediaLibrary, {
-      editor: editor
-    })
-  }).mount(vueContainer);
-
-  // Destroy the Vue instance and the media modal when closed
-  $("#media-modal").on("hidden.bs.modal", function (_e) {
-    m.$destroy();
-    $("#media-modal").remove();
+  const app = Vue.createApp({
+    render: () => Vue.h(MediaLibrary, { editor })
   });
 
-  // Pop the Component modal
-  $("#media-modal").modal();
+  app.mount(vueContainer);
+
+  const modalEl = document.getElementById("media-modal");
+
+  if (modalEl) {
+    modalEl.addEventListener("hidden.bs.modal", () => {
+      app.unmount();
+      modalEl.remove();
+    });
+
+    new Modal(modalEl).show();
+  }
 }
 
+// Bind a single Markdown editor
 export function bindMarkdownEditor(elem) {
-  if (Object.hasOwn(elem, "mde") === false) {
-    let mde = new EasyMDE({
+  if (!elem.mde) {
+    const mde = new EasyMDE({
       autoDownloadFontAwesome: false,
       toolbar: [
         "bold",
@@ -47,9 +45,7 @@ export function bindMarkdownEditor(elem) {
         "image",
         {
           name: "media",
-          action: (editor) => {
-            showMediaLibrary(editor);
-          },
+          action: (editor) => showMediaLibrary(editor),
           className: "fas fa-file-upload",
           title: "Media Library",
         },
@@ -58,7 +54,7 @@ export function bindMarkdownEditor(elem) {
         "guide",
       ],
       element: elem,
-      initialValue: $(elem).val(),
+      initialValue: elem.value,
       forceSync: true,
       minHeight: "200px",
       renderingConfig: {
@@ -66,127 +62,163 @@ export function bindMarkdownEditor(elem) {
         hljs: hljs,
       },
     });
+
     elem.mde = mde;
     elem.codemirror = mde.codemirror;
-    $(elem).on("change keyup paste", function () {
-      mde.codemirror.getDoc().setValue($(elem).val());
+
+    elem.addEventListener("change", () => {
+      mde.codemirror.getDoc().setValue(elem.value);
+      mde.codemirror.refresh();
+    });
+
+    elem.addEventListener("keyup", () => {
+      mde.codemirror.getDoc().setValue(elem.value);
+      mde.codemirror.refresh();
+    });
+
+    elem.addEventListener("paste", () => {
+      mde.codemirror.getDoc().setValue(elem.value);
       mde.codemirror.refresh();
     });
   }
 }
 
+// Bind all Markdown editors
 export function bindMarkdownEditors() {
-  $("textarea.markdown").each(function (_i, e) {
-    bindMarkdownEditor(e);
+  document.querySelectorAll("textarea.markdown").forEach((elem) => {
+    bindMarkdownEditor(elem);
   });
 }
 
+// Add sorting to table headers
 export function makeSortableTables() {
-  $("th.sort-col").append(` <i class="fas fa-sort"></i>`);
-  $("th.sort-col").click(function () {
-    var table = $(this).parents("table").eq(0);
-    var rows = table
-      .find("tr:gt(0)")
-      .toArray()
-      .sort(comparer($(this).index()));
-    this.asc = !this.asc;
-    if (!this.asc) {
-      rows = rows.reverse();
-    }
-    for (var i = 0; i < rows.length; i++) {
-      table.append(rows[i]);
-    }
+  const headers = document.querySelectorAll("th.sort-col");
+  headers.forEach((th) => {
+    const icon = document.createElement("i");
+    icon.classList.add("fas", "fa-sort");
+    th.append(" ", icon);
+
+    th.addEventListener("click", () => {
+      const table = th.closest("table");
+      const tbody = table.querySelector("tbody");
+      const index = Array.from(th.parentNode.children).indexOf(th);
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+      const asc = !th.classList.contains("asc");
+    
+      rows.sort((a, b) => {
+        const valA = a.children[index].innerText.trim();
+        const valB = b.children[index].innerText.trim();
+        return !isNaN(valA) && !isNaN(valB)
+          ? asc ? valA - valB : valB - valA
+          : asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+      });
+    
+      table.querySelectorAll("th").forEach((h) => h.classList.remove("asc", "desc"));
+      th.classList.add(asc ? "asc" : "desc");
+    
+      // ✅ Append back to tbody, not table
+      rows.forEach((row) => tbody.appendChild(row));
+    });
   });
-  function comparer(index) {
-    return function (a, b) {
-      var valA = getCellValue(a, index),
-        valB = getCellValue(b, index);
-      return $.isNumeric(valA) && $.isNumeric(valB)
-        ? valA - valB
-        : valA.toString().localeCompare(valB);
-    };
-  }
-  function getCellValue(row, index) {
-    return $(row).children("td").eq(index).text();
-  }
 }
 
+// Main app entry point
 export default () => {
-  // TODO: This is kind of a hack to mimic a React-like state construct.
-  // It should be removed once we have a real front-end framework in place.
-  $(":input").each(function () {
-    $(this).data("initial", $(this).val());
+  // Save initial form input values
+  document.querySelectorAll("input, select, textarea").forEach((el) => {
+    el.dataset.initial = el.value;
   });
 
-  $(function () {
-    $("tr[data-href], td[data-href]").click(function () {
-      var sel = getSelection().toString();
-      if (!sel) {
-        var href = $(this).attr("data-href");
-        if (href) {
-          window.location = href;
-        }
+  // Clickable table rows (better)
+  document.querySelectorAll('tr[data-href], td[data-href]').forEach((el) => {
+    el.addEventListener("click", (e) => {
+      if (
+        !window.getSelection().toString() &&
+        !e.target.closest('a, button, input')
+      ) {
+        const href = el.getAttribute("data-href");
+        if (href) window.location = href;
       }
-      return false;
     });
+  });
 
-    $("[data-checkbox]").click(function (e) {
-      if ($(e.target).is("input[type=checkbox]")) {
-        e.stopImmediatePropagation();
-        return;
-      }
-      let checkbox = $(this).find("input[type=checkbox]");
-      // Doing it this way with an event allows data-checkbox-all to work
-      checkbox.click();
-      e.stopImmediatePropagation();
-    });
 
-    $("[data-checkbox-all]").on("click change", function (e) {
-      const checked = $(this).prop("checked");
-      const idx = $(this).index() + 1;
-      $(this)
-        .closest("table")
-        .find(`tr td:nth-child(${idx}) input[type=checkbox]`)
-        .prop("checked", checked);
-      e.stopImmediatePropagation();
-    });
-
-    $("tr[data-href] a, tr[data-href] button").click(function (e) {
-      // TODO: This is a hack to allow modal close buttons to work
-      if (!$(this).attr("data-dismiss")) {
+  // Checkbox toggles
+  document.querySelectorAll("[data-checkbox]").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      const checkbox = el.querySelector('input[type="checkbox"]');
+      if (!e.target.matches('input[type="checkbox"]')) {
+        checkbox.click();
         e.stopPropagation();
       }
     });
+  });
 
-    $(".page-select").change(function () {
-      let url = new URL(window.location);
-      url.searchParams.set("page", this.value);
-      window.location.href = url.toString();
-    });
-
-    $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
-      sessionStorage.setItem("activeTab", $(e.target).attr("href"));
-    });
-
-    let activeTab = sessionStorage.getItem("activeTab");
-    if (activeTab) {
-      let target = $(
-        `.nav-tabs a[href="${activeTab}"], .nav-pills a[href="${activeTab}"]`,
-      );
-      if (target.length) {
-        target.tab("show");
-      } else {
-        sessionStorage.removeItem("activeTab");
-      }
-    }
-
-    bindMarkdownEditors();
-    makeSortableTables();
-    $('[data-toggle="tooltip"]').tooltip();
-
-    // Syntax highlighting
-    document.querySelectorAll("pre code").forEach((block) => {
-      hljs.highlightBlock(block);
+  // Select/Deselect all checkboxes
+  document.querySelectorAll("[data-checkbox-all]").forEach((el) => {
+    el.addEventListener("change", (e) => {
+      const checked = el.checked;
+      const table = el.closest("table");
+      const idx = Array.from(el.parentNode.children).indexOf(el) + 1;
+      table.querySelectorAll(`tr td:nth-child(${idx}) input[type="checkbox"]`)
+        .forEach((cb) => { cb.checked = checked; });
     });
   });
+
+  // Prevent row click propagation for inner links/buttons
+  document.querySelectorAll("tr[data-href] a, tr[data-href] button").forEach((el) => {
+    if (!el.hasAttribute("data-bs-dismiss")) {
+      el.addEventListener("click", (e) => e.stopPropagation());
+    }
+  });
+
+  // Prevent row clicks for checkboxes
+  document.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+    checkbox.addEventListener("click", (e) => {
+      e.stopPropagation(); // ✅ stop checkbox click from bubbling to row
+    });
+  });
+
+  // Page selector
+  document.querySelectorAll(".page-select").forEach((select) => {
+    select.addEventListener("change", () => {
+      const url = new URL(window.location);
+      url.searchParams.set("page", select.value);
+      window.location.href = url.toString();
+    });
+  });
+
+  // Restore last active tab
+  const activeTab = sessionStorage.getItem("activeTab");
+  if (activeTab) {
+    const target = document.querySelector(
+      `.nav-tabs a[href="${activeTab}"], .nav-pills a[href="${activeTab}"]`
+    );
+    if (target) {
+      new Tab(target).show();
+    } else {
+      sessionStorage.removeItem("activeTab");
+    }
+  }
+
+  // Save tab on change
+  document.querySelectorAll('a[data-bs-toggle="tab"]').forEach((el) => {
+    el.addEventListener("shown.bs.tab", (e) => {
+      sessionStorage.setItem("activeTab", e.target.getAttribute("href"));
+    });
+  });
+
+  // Enable tooltips
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
+    new Tooltip(el);
+  });
+
+  // Syntax highlighting
+  document.querySelectorAll("pre code").forEach((block) => {
+    hljs.highlightBlock(block);
+  });
+
+  // Init
+  bindMarkdownEditors();
+  makeSortableTables();
 };

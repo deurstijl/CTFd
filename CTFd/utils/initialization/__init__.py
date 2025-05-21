@@ -354,10 +354,11 @@ def init_request_processors(app):
                     f"default-src 'self'; "
                     f"script-src 'self' 'nonce-{nonce}';"
                     f"style-src 'self' 'nonce-{nonce}' ;"
+                    f"font-src 'self' data: ; "
                     f"object-src 'none'; "
                     f"base-uri 'none'; "
                     f"frame-ancestors 'none';"
-                    f"img-src 'self' data:"
+                    f"img-src 'self' data: ;"
                 )
         return response
         

@@ -1,86 +1,79 @@
 <template>
-  <div class="modal fade" tabindex="-1">
+  <div
+    class="modal fade"
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    :class="{ show: visible }"
+    :style="{ display: visible ? 'block' : 'none' }"
+  >
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header text-center">
           <div class="container">
             <div class="row">
               <div class="col-md-12">
-                <h3>Hint</h3>
+                <h3>Edit Hint</h3>
               </div>
             </div>
           </div>
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
+            @click="$emit('close')"
             aria-label="Close"
           >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
+
         <form method="POST" @submit.prevent="updateHint">
           <div class="modal-body">
             <div class="container">
               <div class="row">
                 <div class="col-md-12">
-                  <div class="form-group">
-                    <label>
-                      Title<br />
-                      <small>Content displayed before hint unlocking</small>
-                    </label>
+
+                  <div class="mb-4">
+                    <label>Title<br /><small>Shown before unlocking</small></label>
                     <input
                       type="text"
                       class="form-control"
                       name="title"
-                      :value="this.title"
+                      :value="title"
                       ref="title"
                     />
                   </div>
 
-                  <div class="form-group">
-                    <label>
-                      Hint<br />
-                      <small>Markdown &amp; HTML are supported</small>
-                    </label>
-                    <!-- Explicitly don't put the markdown class on this because we will add it later -->
+                  <div class="mb-4">
+                    <label>Hint<br /><small>Markdown & HTML supported</small></label>
                     <textarea
-                      type="text"
                       class="form-control"
                       name="content"
                       rows="7"
-                      :value="this.content"
+                      :value="content"
                       ref="content"
                     ></textarea>
                   </div>
 
-                  <div class="form-group">
-                    <label>
-                      Cost<br />
-                      <small>How many points it costs to see your hint.</small>
-                    </label>
+                  <div class="mb-4">
+                    <label>Cost<br /><small>Points required to view</small></label>
                     <input
                       type="number"
                       class="form-control"
-                      name="cost"
                       v-model.lazy="cost"
                     />
                   </div>
 
-                  <div class="form-group">
-                    <label>
-                      Requirements<br />
-                      <small
-                        >Hints that must be unlocked before unlocking this
-                        hint</small
-                      >
+                  <div class="mb-4">
+                    <label>Requirements<br />
+                      <small>Hints that must be unlocked first</small>
                     </label>
                     <div
                       class="form-check"
                       v-for="hint in otherHints"
                       :key="hint.id"
                     >
-                      <label class="form-check-label cursor-pointer">
+                      <label class="form-check-label">
                         <input
                           class="form-check-input"
                           type="checkbox"
@@ -91,20 +84,23 @@
                       </label>
                     </div>
                   </div>
+
                 </div>
               </div>
             </div>
           </div>
+
           <div class="modal-footer">
             <div class="container">
               <div class="row">
                 <div class="col-md-12">
-                  <button class="btn btn-primary float-right">Submit</button>
+                  <button class="btn btn-primary float-end">Submit</button>
                 </div>
               </div>
             </div>
           </div>
         </form>
+
       </div>
     </div>
   </div>
@@ -120,8 +116,9 @@ export default {
     challenge_id: Number,
     hint_id: Number,
     hints: Array,
+    visible: Boolean,
   },
-  data: function () {
+  data() {
     return {
       cost: 0,
       title: null,
@@ -130,26 +127,26 @@ export default {
     };
   },
   computed: {
-    // Get all hints besides the current one
-    otherHints: function () {
-      return this.hints.filter((hint) => {
-        return hint.id !== this.$props.hint_id;
-      });
+    otherHints() {
+      return this.hints.filter((hint) => hint.id !== this.hint_id);
     },
   },
   watch: {
     hint_id: {
       immediate: true,
-      handler(val, oldVal) {
-        if (val !== null) {
-          this.loadHint();
-        }
+      handler(val) {
+        if (val !== null) this.loadHint();
       },
+    },
+    visible(newVal) {
+      if (newVal && this.hint_id != null) {
+        this.loadHint();
+      }
     },
   },
   methods: {
-    loadHint: function () {
-      CTFd.fetch(`/api/v1/hints/${this.$props.hint_id}?preview=true`, {
+    loadHint() {
+      CTFd.fetch(`/api/v1/hints/${this.hint_id}?preview=true`, {
         method: "GET",
         credentials: "same-origin",
         headers: {
@@ -157,53 +154,36 @@ export default {
           "Content-Type": "application/json",
         },
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          if (response.success) {
-            let hint = response.data;
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.success) {
+            const hint = res.data;
             this.cost = hint.cost;
             this.title = hint.title;
             this.content = hint.content;
             this.selectedHints = hint.requirements?.prerequisites || [];
-            // Wait a little longer because we need the modal to appear.
-            // Kinda nasty but not really avoidable without polling the DOM via CodeMirror
-            let editor = this.$refs.content;
-            bindMarkdownEditor(editor);
-            setTimeout(() => {
-              editor.mde.codemirror.getDoc().setValue(editor.value);
-              this._forceRefresh();
-            }, 200);
+
+            this.$nextTick(() => {
+              const editor = this.$refs.content;
+              bindMarkdownEditor(editor);
+              setTimeout(() => {
+                editor.mde.codemirror.getDoc().setValue(this.content || "");
+                editor.mde.codemirror.refresh();
+              }, 200);
+            });
           }
         });
     },
-    _forceRefresh: function () {
-      // Temporary function while we are relying on CodeMirror + MDE
-      let editor = this.$refs.content;
-      editor.mde.codemirror.refresh();
-    },
-    getCost: function () {
-      return this.cost || 0;
-    },
-    getContent: function () {
-      this._forceRefresh();
-      let editor = this.$refs.content;
-      return editor.mde.codemirror.getDoc().getValue();
-    },
-    getTitle: function () {
-      return this.$refs.title.value;
-    },
-    updateHint: function () {
-      let params = {
-        challenge_id: this.$props.challenge_id,
+    updateHint() {
+      const params = {
+        challenge_id: this.challenge_id,
         content: this.getContent(),
-        cost: this.getCost(),
+        cost: this.cost || 0,
         title: this.getTitle(),
         requirements: { prerequisites: this.selectedHints },
       };
 
-      CTFd.fetch(`/api/v1/hints/${this.$props.hint_id}`, {
+      CTFd.fetch(`/api/v1/hints/${this.hint_id}`, {
         method: "PATCH",
         credentials: "same-origin",
         headers: {
@@ -212,27 +192,37 @@ export default {
         },
         body: JSON.stringify(params),
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((response) => {
-          if (response.success) {
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.success) {
             this.$emit("refreshHints", this.$options.name);
+            this.$emit("close");
+          } else {
+            alert("Failed to update hint.");
           }
+        })
+        .catch((err) => {
+          console.error("Update failed:", err);
+          alert("Unexpected error: " + err.message);
         });
     },
-  },
-  mounted() {
-    if (this.hint_id) {
-      this.loadHint();
-    }
-  },
-  created() {
-    if (this.hint_id) {
-      this.loadHint();
-    }
+    getContent() {
+      const editor = this.$refs.content;
+      return editor.mde.codemirror.getDoc().getValue();
+    },
+    getTitle() {
+      return this.$refs.title.value;
+    },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.modal.show {
+  opacity: 1;
+  display: block !important;
+}
+</style>

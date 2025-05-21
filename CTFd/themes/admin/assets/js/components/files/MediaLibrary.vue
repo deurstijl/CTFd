@@ -3,206 +3,100 @@
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                <h3 class="text-center">Media Library</h3>
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <h3 class="text-center w-100">Media Library</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
-          <div class="modal-header">
-            <div class="container">
-              <div class="row mh-100">
-                <div class="col-md-6" id="media-library-list">
-                  <div
-                    class="media-item-wrapper"
-                    v-for="file in files"
-                    :key="file.id"
-                  >
-                    <a
-                      href="javascript:void(0)"
-                      @click="
-                        selectFile(file)
-                        // return false;
-                      "
-                    >
-                      <i
-                        v-bind:class="getIconClass(file.location)"
-                        aria-hidden="true"
-                      ></i>
-                      <small class="media-item-title pl-1">{{
-                        file.location.split("/").pop()
-                      }}</small>
-                    </a>
-                  </div>
+          <div class="row">
+            <div class="col-md-6" id="media-library-list">
+              <div
+                class="media-item-wrapper"
+                v-for="file in files"
+                :key="file.id"
+              >
+                <a href="#" @click.prevent="selectFile(file)">
+                  <i :class="getIconClass(file.location)" aria-hidden="true"></i>
+                  <small class="media-item-title ps-1">{{ file.location.split("/").pop() }}</small>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-md-6" id="media-library-details">
+              <h4 class="text-center">Media Details</h4>
+              <div class="text-center" v-if="selectedFile">
+                <div v-if="getIconClass(selectedFile.location) === 'far fa-file-image'">
+                  <img :src="buildSelectedFileUrl()" class="img-fluid" style="max-height: 300px; object-fit: contain;" />
                 </div>
-                <div class="col-md-6" id="media-library-details">
-                  <h4 class="text-center">Media Details</h4>
-                  <div id="media-item">
-                    <div class="text-center" id="media-icon">
-                      <div v-if="this.selectedFile">
-                        <div
-                          v-if="
-                            getIconClass(this.selectedFile.location) ===
-                            'far fa-file-image'
-                          "
-                        >
-                          <img
-                            v-bind:src="buildSelectedFileUrl()"
-                            style="
-                              max-width: 100%;
-                              max-height: 100%;
-                              object-fit: contain;
-                            "
-                          />
-                        </div>
-                        <div v-else>
-                          <i
-                            v-bind:class="`${getIconClass(
-                              this.selectedFile.location,
-                            )} fa-4x`"
-                            aria-hidden="true"
-                          ></i>
-                        </div>
-                      </div>
-                    </div>
-                    <br />
-                    <div
-                      class="text-center"
-                      id="media-filename"
-                      v-if="this.selectedFile"
-                    >
-                      <a v-bind:href="buildSelectedFileUrl()" target="_blank">
-                        {{ this.selectedFile.location.split("/").pop() }}
-                      </a>
-                    </div>
-                    <br />
+                <div v-else>
+                  <i :class="`${getIconClass(selectedFile.location)} fa-4x`" aria-hidden="true"></i>
+                </div>
 
-                    <div class="form-group">
-                      <div v-if="this.selectedFile">
-                        Link:
-                        <input
-                          class="form-control"
-                          type="text"
-                          id="media-link"
-                          v-bind:value="buildSelectedFileUrl()"
-                          readonly
-                        />
-                      </div>
-                      <div v-else>
-                        Link:
-                        <input
-                          class="form-control"
-                          type="text"
-                          id="media-link"
-                          readonly
-                        />
-                      </div>
-                    </div>
+                <div class="mt-3">
+                  <a :href="buildSelectedFileUrl()" target="_blank">{{ selectedFile.location.split("/").pop() }}</a>
+                </div>
 
-                    <div class="form-group text-center">
-                      <div class="row">
-                        <div class="col-md-6">
-                          <button
-                            @click="insertSelectedFile"
-                            class="btn btn-success w-100"
-                            id="media-insert"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Insert link into editor"
-                          >
-                            Insert
-                          </button>
-                        </div>
-                        <div class="col-md-3">
-                          <button
-                            @click="downloadSelectedFile"
-                            class="btn btn-primary w-100"
-                            id="media-download"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Download file"
-                          >
-                            <i class="fas fa-download"></i>
-                          </button>
-                        </div>
-                        <div class="col-md-3">
-                          <button
-                            @click="deleteSelectedFile"
-                            class="btn btn-danger w-100"
-                            id="media-delete"
-                            data-toggle="tooltip"
-                            data-placement="top"
-                            title="Delete file"
-                          >
-                            <i class="far fa-trash-alt"></i>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                <div class="mt-3">
+                  <label for="media-link">Link:</label>
+                  <input id="media-link" class="form-control" type="text" :value="buildSelectedFileUrl()" readonly />
+                </div>
+
+                <div class="row text-center mt-4">
+                  <div class="col-md-6 mb-2">
+                    <button @click="insertSelectedFile" class="btn btn-success w-100">Insert</button>
+                  </div>
+                  <div class="col-md-3 mb-2">
+                    <button @click="downloadSelectedFile" class="btn btn-primary w-100">
+                      <i class="fas fa-download"></i>
+                    </button>
+                  </div>
+                  <div class="col-md-3 mb-2">
+                    <button @click="deleteSelectedFile" class="btn btn-danger w-100">
+                      <i class="far fa-trash-alt"></i>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <form id="media-library-upload" enctype="multipart/form-data">
-            <div class="form-row pt-3">
+          <form id="media-library-upload" enctype="multipart/form-data" class="mt-4">
+            <div class="row">
               <div class="col">
-                <div class="form-group">
-                  <label for="media-files">Upload Files</label>
-                  <input
-                    type="file"
-                    name="file"
-                    id="media-files"
-                    class="form-control-file"
-                    multiple
-                  />
-                  <sub class="help-block">
-                    Attach multiple files using Control+Click or Cmd+Click.
-                  </sub>
+                <div class="mb-3">
+                  <label for="media-files" class="form-label">Upload Files</label>
+                  <input type="file" name="file" id="media-files" class="form-control" multiple />
+                  <div class="form-text">Attach multiple files using Control+Click or Cmd+Click.</div>
                 </div>
               </div>
               <div class="col">
-                <div class="form-group">
-                  <label>Upload File Location</label>
-                  <input
-                    class="form-control"
-                    type="text"
-                    name="location"
-                    placeholder="Location"
-                  />
-                  <sub class="help-block">
-                    Route where file will be accessible (if not provided a
-                    random folder will be used). <br />
-                    Provide as <code>directory/filename.ext</code>
-                  </sub>
+                <div class="mb-3">
+                  <label for="location" class="form-label">Upload File Location</label>
+                  <input type="text" name="location" id="location" class="form-control" placeholder="Location" />
+                  <div class="form-text">
+                    Route where file will be accessible (optional). Provide as <code>directory/filename.ext</code>.
+                  </div>
                 </div>
               </div>
             </div>
             <input type="hidden" value="page" name="type" />
           </form>
-        </div>
-        <div class="modal-footer">
-          <div class="float-right">
-            <button
-              @click="uploadChosenFiles"
-              type="submit"
-              class="btn btn-primary media-upload-button"
+          <div class="progress mb-4" v-if="isUploading">
+            <div
+              class="progress-bar progress-bar-striped progress-bar-animated"
+              role="progressbar"
+              :style="{ width: uploadProgress + '%' }"
+              :aria-valuenow="uploadProgress"
+              aria-valuemin="0"
+              aria-valuemax="100"
             >
-              Upload
-            </button>
+              {{ uploadProgress }}%
+            </div>
           </div>
+        </div>
+
+        <div class="modal-footer">
+          <button @click="uploadChosenFiles" type="submit" class="btn btn-primary ms-auto">Upload</button>
         </div>
       </div>
     </div>
@@ -211,53 +105,95 @@
 
 <script>
 import CTFd from "../../compat/CTFd";
-import { default as helpers } from "../../compat/helpers";
+import helpers from "../../compat/helpers";
+import { Modal } from "bootstrap";
 
 function get_page_files() {
   return CTFd.fetch("/api/v1/files?type=page", {
     credentials: "same-origin",
-  }).then(function (response) {
-    return response.json();
-  });
+  }).then((response) => response.json());
 }
 
 export default {
   props: {
     editor: Object,
   },
-  data: function () {
+  data() {
     return {
       files: [],
       selectedFile: null,
+      uploadProgress: 0, // New state
+      isUploading: false, // To toggle visibility
     };
   },
   methods: {
-    getPageFiles: function () {
+    getPageFiles() {
       get_page_files().then((response) => {
         this.files = response.data;
-        return this.files;
       });
     },
-    uploadChosenFiles: function () {
-      // TODO: We should reduce the need to interact with the DOM directly.
-      // This looks jank and we should be able to remove it.
-      let form = document.querySelector("#media-library-upload");
-      helpers.files.upload(form, {}, (_data) => {
-        this.getPageFiles();
+    uploadChosenFiles() {
+      const form = document.querySelector("#media-library-upload");
+      const locationInput = form.querySelector('input[name="location"]');
+      const locationValue = locationInput?.value?.trim();
+      if (locationValue && !locationValue.includes("/")) {
+        alert("Upload location must include a folder and filename, like 'folder/file.ext'.");
+        return;
+      }
+
+      const formData = new FormData(form);
+
+      this.isUploading = true;
+      this.uploadProgress = 0;
+
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", "/api/v1/files");
+
+      xhr.upload.addEventListener("progress", (e) => {
+        if (e.lengthComputable) {
+          this.uploadProgress = Math.round((e.loaded * 100) / e.total);
+        }
       });
+
+      xhr.onload = () => {
+        this.isUploading = false;
+        this.uploadProgress = 100;
+
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            this.getPageFiles();
+            this.selectedFile = null;
+
+            // Optionally close modal
+            const modalEl = document.getElementById("media-modal");
+            const modal = Modal.getInstance(modalEl) || new Modal(modalEl);
+            modal.hide();
+          }
+        } catch (err) {
+          console.error("Upload failed or bad JSON:", err);
+        }
+      };
+
+      xhr.onerror = () => {
+        this.isUploading = false;
+        alert("Upload failed. Please try again.");
+      };
+
+      formData.append("nonce", CTFd.config.csrfNonce);
+      xhr.send(formData);
     },
-    selectFile: function (file) {
+    selectFile(file) {
       this.selectedFile = file;
-      return this.selectedFile;
     },
-    buildSelectedFileUrl: function () {
-      return CTFd.config.urlRoot + "/files/" + this.selectedFile.location;
+    buildSelectedFileUrl() {
+      return `${CTFd.config.urlRoot}/files/${this.selectedFile.location}`;
     },
-    deleteSelectedFile: function () {
-      const file_id = this.selectedFile.id;
+    deleteSelectedFile() {
+      if (!this.selectedFile) return;
 
       if (confirm("Are you sure you want to delete this file?")) {
-        CTFd.fetch("/api/v1/files/" + file_id, {
+        CTFd.fetch(`/api/v1/files/${this.selectedFile.id}`, {
           method: "DELETE",
         }).then((response) => {
           if (response.status === 200) {
@@ -271,66 +207,46 @@ export default {
         });
       }
     },
-    insertSelectedFile: function () {
-      let editor = this.$props.editor;
+    insertSelectedFile() {
+      let editor = this.editor;
       if (editor.hasOwnProperty("codemirror")) {
         editor = editor.codemirror;
       }
       const doc = editor.getDoc();
       const cursor = doc.getCursor();
-
       const url = this.buildSelectedFileUrl();
-      const img =
-        this.getIconClass(this.selectedFile.location) === "far fa-file-image";
       const filename = url.split("/").pop();
-      let link = "[{0}]({1})".format(filename, url);
-      if (img) {
-        link = "!" + link;
-      }
-
+      const isImage = this.getIconClass(this.selectedFile.location) === "far fa-file-image";
+      const link = `${isImage ? "!" : ""}[${filename}](${url})`;
       doc.replaceRange(link, cursor);
     },
-    downloadSelectedFile: function () {
-      const link = this.buildSelectedFileUrl();
-      window.open(link, "_blank");
+    downloadSelectedFile() {
+      window.open(this.buildSelectedFileUrl(), "_blank");
     },
-    getIconClass: function (filename) {
+    getIconClass(filename) {
       const mapping = {
-        // Image Files
         png: "far fa-file-image",
         jpg: "far fa-file-image",
         jpeg: "far fa-file-image",
         gif: "far fa-file-image",
         bmp: "far fa-file-image",
         svg: "far fa-file-image",
-
-        // Text Files
         txt: "far fa-file-alt",
-
-        // Video Files
         mov: "far fa-file-video",
         mp4: "far fa-file-video",
         wmv: "far fa-file-video",
         flv: "far fa-file-video",
         mkv: "far fa-file-video",
         avi: "far fa-file-video",
-
-        // PDF Files
         pdf: "far fa-file-pdf",
-
-        // Audio Files
         mp3: "far fa-file-sound",
         wav: "far fa-file-sound",
         aac: "far fa-file-sound",
-
-        // Archive Files
         zip: "far fa-file-archive",
         gz: "far fa-file-archive",
         tar: "far fa-file-archive",
         "7z": "far fa-file-archive",
         rar: "far fa-file-archive",
-
-        // Code Files
         py: "far fa-file-code",
         c: "far fa-file-code",
         cpp: "far fa-file-code",
@@ -339,13 +255,18 @@ export default {
         rb: "far fa-file-code",
         go: "far fa-file-code",
       };
-
-      const ext = filename.split(".").pop();
+      const ext = filename.split(".").pop().toLowerCase();
       return mapping[ext] || "far fa-file";
     },
   },
   created() {
-    return this.getPageFiles();
+    this.getPageFiles();
   },
 };
 </script>
+
+<style scoped>
+.media-item-wrapper {
+  margin-bottom: 0.5rem;
+}
+</style>

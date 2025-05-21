@@ -4,11 +4,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="jumbotron">
+<div class="container-fluid bg-light p-5 text-center mb-4">
 	<div class="container">
 		<h1>Teams
-			<span class="create-team" role="button" data-toggle="tooltip" title="Create Team">
-				<a href="{{ url_for('admin.teams_new') }}" style="color: inherit;">
+			<span class="create-team" role="button" data-bs-toggle="tooltip" title="Create Team">
+				<a href="{{ url_for('admin.teams_new') }}" class="color-inherit;">
 					<i class="btn-fa fas fa-plus-circle"></i>
 				</a>
 			</span>
@@ -29,14 +29,14 @@
 			{% endif %}
 
 			{% with form = Forms.teams.TeamSearchForm(field=field, q=q) %}
-			<form method="GET" class="form-inline">
-				<div class="form-group col-md-2">
-					{{ form.field(class="form-control custom-select w-100") }}
+			<form method="GET" class="d-flex align-items-center gap-2">
+				<div class="mb-4 col-md-2">
+					{{ form.field(class="form-control form-select w-100") }}
 				</div>
-				<div class="form-group col-md-8">
+				<div class="mb-4 col-md-8">
 					{{ form.q(class="form-control w-100", placeholder="Search for matching teams") }}
 				</div>
-				<div class="form-group col-md-2">
+				<div class="mb-4 col-md-2">
 					<button type="submit" class="btn btn-primary w-100">
 						<i class="fas fa-search" aria-hidden="true"></i>
 					</button>
@@ -50,12 +50,12 @@
 
 	<div class="row">
 		<div class="col-md-12">
-			<div class="float-right pb-3">
+			<div class="float-end pb-3">
 				<div class="btn-group" role="group">
-					<button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" title="Edit Teams" id="teams-edit-button">
+					<button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" title="Edit Teams" id="teams-edit-button">
 						<i class="btn-fa fas fa-pencil-alt"></i>
 					</button>
-					<button type="button" class="btn btn-outline-danger" data-toggle="tooltip" title="Delete Teams" id="teams-delete-button">
+					<button type="button" class="btn btn-outline-danger" data-bs-toggle="tooltip" title="Delete Teams" id="teams-delete-button">
 						<i class="btn-fa fas fa-trash-alt"></i>
 					</button>
 				</div>
@@ -74,7 +74,7 @@
 							</div>
 						</th>
 						<th class="sort-col text-center"><b>ID</b></th>
-						<th class="sort-col text-left"><b>Team</b></th>
+						<th class="sort-col text-start"><b>Team</b></th>
 						<th class="sort-col text-center"><b>Country</b></th>
 						<th class="sort-col text-center px-0"><b>Hidden</b></th>
 						<th class="sort-col text-center px-0"><b>Banned</b></th>
@@ -94,16 +94,16 @@
 								{{ team.name | truncate(32) }}
 							</a>
 							{% if team.bracket_id %}
-								<span class="badge badge-secondary">{{ team.bracket.name }}</span>
+								<span class="badge bg-secondary">{{ team.bracket.name }}</span>
 							{% endif %}
 							{% if team.oauth_id %}
 								<a href="https://majorleaguecyber.org/t/{{ team.name }}">
-									<span class="badge badge-primary">Official</span>
+									<span class="badge bg-primary">Official</span>
 								</a>
 							{% endif %}
 							{% if team.website %}
-								<a href="{{ team.website }}" target="_blank" class="badge badge-info" rel="noopener">
-									<i class="btn-fa fas fa-external-link-alt" data-toggle="tooltip" data-placement="top"
+								<a href="{{ team.website }}" target="_blank" class="badge bg-info" rel="noopener">
+									<i class="btn-fa fas fa-external-link-alt" data-bs-toggle="tooltip" data-placement="top"
 									   title="{{ team.website }}" aria-hidden="true"></i>
 								</a>
 							{% endif %}
@@ -126,13 +126,13 @@
 
 						<td class="team-hidden d-md-table-cell d-lg-table-cell text-center" value="{{ team.hidden }}">
 							{% if team.hidden %}
-								<span class="badge badge-danger">hidden</span>
+								<span class="badge bg-danger">hidden</span>
 							{% endif %}
 						</td>
 
 						<td class="team-banned d-md-table-cell d-lg-table-cell text-center" value="{{ team.banned }}">
 							{% if team.banned %}
-								<span class="badge badge-danger">banned</span>
+								<span class="badge bg-danger">banned</span>
 							{% endif %}
 						</td>
 					</tr>

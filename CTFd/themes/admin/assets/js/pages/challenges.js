@@ -2,80 +2,113 @@ import "./main";
 import CTFd from "../compat/CTFd";
 import $ from "jquery";
 import "../compat/json";
-import { ezAlert, ezQuery } from "../compat/ezq";
+import Modal from "bootstrap/js/dist/modal";
 
-function deleteSelectedChallenges(_event) {
-  let challengeIDs = $("input[data-challenge-id]:checked").map(function () {
-    return $(this).data("challenge-id");
-  });
-  let target = challengeIDs.length === 1 ? "challenge" : "challenges";
+function deleteSelectedChallenges(event) {
+  event.preventDefault();
 
-  ezQuery({
-    title: "Delete Challenges",
-    body: `Are you sure you want to delete ${challengeIDs.length} ${target}?`,
-    success: function () {
-      const reqs = [];
-      for (var chalID of challengeIDs) {
-        reqs.push(
-          CTFd.fetch(`/api/v1/challenges/${chalID}`, {
-            method: "DELETE",
-          }),
-        );
-      }
-      Promise.all(reqs).then((_responses) => {
-        window.location.reload();
-      });
-    },
-  });
+  const checkboxes = document.querySelectorAll("input[data-challenge-id]:checked");
+  const challengeIDs = Array.from(checkboxes).map(el => el.dataset.challengeId);
+  const target = challengeIDs.length === 1 ? "challenge" : "challenges";
+
+  if (challengeIDs.length === 0) {
+    alert("Please select at least one challenge to delete.");
+    return;
+  }
+
+  const confirmed = confirm(`Are you sure you want to delete ${challengeIDs.length} ${target}?`);
+  if (!confirmed) return;
+
+  const requests = challengeIDs.map(chalID =>
+    CTFd.fetch(`/api/v1/challenges/${chalID}`, {
+      method: "DELETE",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+  );
+
+  Promise.all(requests)
+    .then(() => {
+      window.location.reload();
+    })
+    .catch(err => {
+      console.error("Failed to delete challenges:", err);
+      alert("An error occurred while deleting challenges.");
+    });
 }
 
-function bulkEditChallenges(_event) {
-  let challengeIDs = $("input[data-challenge-id]:checked").map(function () {
-    return $(this).data("challenge-id");
-  });
 
-  ezAlert({
-    title: "Edit Challenges",
-    body: $(`
-    <form id="challenges-bulk-edit">
-      <div class="form-group">
-        <label>Category</label>
-        <input type="text" name="category" data-initial="" value="">
-      </div>
-      <div class="form-group">
-        <label>Value</label>
-        <input type="number" name="value" data-initial="" value="">
-      </div>
-      <div class="form-group">
-        <label>State</label>
-        <select name="state" data-initial="">
-          <option value="">--</option>
-          <option value="visible">Visible</option>
-          <option value="hidden">Hidden</option>
-        </select>
-      </div>
-    </form>
-    `),
-    button: "Submit",
-    success: function () {
-      let data = $("#challenges-bulk-edit").serializeJSON(true);
-      const reqs = [];
-      for (var chalID of challengeIDs) {
-        reqs.push(
-          CTFd.fetch(`/api/v1/challenges/${chalID}`, {
-            method: "PATCH",
-            body: JSON.stringify(data),
-          }),
-        );
+
+
+function bulkEditChallenges(event) {
+  event.preventDefault();
+
+  const checkboxes = document.querySelectorAll("input[data-challenge-id]:checked");
+  const challengeIDs = Array.from(checkboxes).map(el => el.dataset.challengeId);
+
+  if (challengeIDs.length === 0) {
+    alert("Please select at least one challenge to edit.");
+    return;
+  }
+
+  const modalEl = document.getElementById("challengesBulkEditModal");
+  const modal = new Modal(modalEl);
+  modal.show();
+
+  const form = document.getElementById("challenges-bulk-edit-form");
+
+  // Remove any previously bound handler
+  form.onsubmit = async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const data = {};
+
+    for (const [key, value] of formData.entries()) {
+      if (value !== "") {
+        data[key] = key === "value" ? Number(value) : value;
       }
-      Promise.all(reqs).then((_responses) => {
-        window.location.reload();
-      });
-    },
-  });
+    }
+
+    const requests = challengeIDs.map(chalID =>
+      CTFd.fetch(`/api/v1/challenges/${chalID}`, {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+    );
+
+    try {
+      await Promise.all(requests);
+      modal.hide();
+      window.location.reload();
+    } catch (err) {
+      console.error("Bulk edit failed:", err);
+      alert("An error occurred while editing challenges.");
+    }
+  };
 }
 
-$(() => {
-  $("#challenges-delete-button").click(deleteSelectedChallenges);
-  $("#challenges-edit-button").click(bulkEditChallenges);
+document.addEventListener("DOMContentLoaded", () => {
+  const deleteButton = document.getElementById("challenges-delete-button");
+  const editButton = document.getElementById("challenges-edit-button");
+
+  if (deleteButton) {
+    deleteButton.addEventListener("click", deleteSelectedChallenges);
+  } else {
+    console.warn("Missing #challenges-delete-button");
+  }
+
+  if (editButton) {
+    editButton.addEventListener("click", bulkEditChallenges);
+  } else {
+    console.warn("Missing #challenges-edit-button");
+  }
 });

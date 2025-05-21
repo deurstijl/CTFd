@@ -5,7 +5,7 @@
       :data-notif-id="this.id"
       class="delete-notification close position-absolute p-3"
       style="right: 0"
-      data-dismiss="alert"
+      data-bs-dismiss="alert"
       aria-label="Close"
       @click="deleteNotification()"
     >

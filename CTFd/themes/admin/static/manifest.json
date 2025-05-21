@@ -1,46 +1,46 @@
 {
-  "_CommentBox-!~{00n}~.js": {
-    "file": "assets/CommentBox-DT2N8AzN.css",
-    "src": "_CommentBox-!~{00n}~.js"
+  "_CommentBox-DmlMBOND.css": {
+    "file": "assets/CommentBox-DmlMBOND.css",
+    "src": "_CommentBox-DmlMBOND.css"
   },
-  "_CommentBox-DAFh8Ri2.js": {
-    "file": "assets/CommentBox-DAFh8Ri2.js",
+  "_CommentBox-ktkeyXln.js": {
+    "file": "assets/CommentBox-ktkeyXln.js",
     "name": "CommentBox",
     "imports": [
       "assets/js/pages/main.js"
     ],
     "css": [
-      "assets/CommentBox-DT2N8AzN.css"
+      "assets/CommentBox-DmlMBOND.css"
     ]
   },
   "_echarts-l0sNRNKZ.js": {
     "file": "assets/echarts-l0sNRNKZ.js",
     "name": "echarts"
   },
-  "_echarts.common-DqHxtDez.js": {
-    "file": "assets/echarts.common-DqHxtDez.js",
+  "_echarts.common-BBHlT8Fy.js": {
+    "file": "assets/echarts.common-BBHlT8Fy.js",
     "name": "echarts.common",
     "imports": [
       "assets/js/pages/main.js"
     ]
   },
-  "_graphs-D7_mhAOs.js": {
-    "file": "assets/graphs-D7_mhAOs.js",
+  "_graphs-Y-qJTCLC.js": {
+    "file": "assets/graphs-Y-qJTCLC.js",
     "name": "graphs",
     "imports": [
       "assets/js/pages/main.js",
-      "_echarts.common-DqHxtDez.js"
+      "_echarts.common-BBHlT8Fy.js"
     ]
   },
-  "_htmlmixed-SxqHQm5p.js": {
-    "file": "assets/htmlmixed-SxqHQm5p.js",
+  "_htmlmixed-x7ddhpJa.js": {
+    "file": "assets/htmlmixed-x7ddhpJa.js",
     "name": "htmlmixed",
     "imports": [
       "assets/js/pages/main.js"
     ]
   },
-  "_tab-CCbbAUQo.js": {
-    "file": "assets/tab-CCbbAUQo.js",
+  "_tab-D3-JqZqv.js": {
+    "file": "assets/tab-D3-JqZqv.js",
     "name": "tab",
     "imports": [
       "assets/js/pages/main.js"
@@ -62,31 +62,31 @@
     "isEntry": true
   },
   "assets/css/fonts.scss": {
-    "file": "assets/fonts-css-GjnL0-CF.css",
+    "file": "assets/fonts-css-X4SzEcuE.css",
     "src": "assets/css/fonts.scss",
     "isEntry": true
   },
   "assets/css/main.scss": {
-    "file": "assets/main-css-Y5AoxKGF.css",
+    "file": "assets/main-css-BHLzFZ_2.css",
     "src": "assets/css/main.scss",
     "isEntry": true
   },
   "assets/js/pages/challenge.js": {
-    "file": "assets/pages/challenge-CFkjkRKj.js",
+    "file": "assets/pages/challenge-DDusqYC8.js",
     "name": "pages/challenge",
     "src": "assets/js/pages/challenge.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_tab-CCbbAUQo.js",
-      "_CommentBox-DAFh8Ri2.js"
+      "_tab-D3-JqZqv.js",
+      "_CommentBox-ktkeyXln.js"
     ],
     "css": [
-      "assets/challenge-CgL1HbyM.css"
+      "assets/challenge-BxoiprTO.css"
     ]
   },
   "assets/js/pages/challenges.js": {
-    "file": "assets/pages/challenges-D-uRz9Pv.js",
+    "file": "assets/pages/challenges-Cn1DcuPQ.js",
     "name": "pages/challenges",
     "src": "assets/js/pages/challenges.js",
     "isEntry": true,
@@ -95,35 +95,38 @@
     ]
   },
   "assets/js/pages/configs.js": {
-    "file": "assets/pages/configs-CsfvNA7v.js",
+    "file": "assets/pages/configs--t8nm-5G.js",
     "name": "pages/configs",
     "src": "assets/js/pages/configs.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_tab-CCbbAUQo.js",
-      "_htmlmixed-SxqHQm5p.js"
+      "_tab-D3-JqZqv.js",
+      "_htmlmixed-x7ddhpJa.js"
     ]
   },
   "assets/js/pages/editor.js": {
-    "file": "assets/pages/editor-CrBAdsGa.js",
+    "file": "assets/pages/editor-D6CYoMHp.js",
     "name": "pages/editor",
     "src": "assets/js/pages/editor.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_htmlmixed-SxqHQm5p.js",
-      "_CommentBox-DAFh8Ri2.js"
+      "_htmlmixed-x7ddhpJa.js",
+      "_CommentBox-ktkeyXln.js"
     ]
   },
   "assets/js/pages/main.js": {
-    "file": "assets/pages/main-DvY3K8eO.js",
+    "file": "assets/pages/main-fLwNSudD.js",
     "name": "pages/main",
     "src": "assets/js/pages/main.js",
-    "isEntry": true
+    "isEntry": true,
+    "css": [
+      "assets/main-CnYlV_MK.css"
+    ]
   },
   "assets/js/pages/notifications.js": {
-    "file": "assets/pages/notifications-BcPrRl-n.js",
+    "file": "assets/pages/notifications-Bp2tMAnk.js",
     "name": "pages/notifications",
     "src": "assets/js/pages/notifications.js",
     "isEntry": true,
@@ -132,7 +135,7 @@
     ]
   },
   "assets/js/pages/pages.js": {
-    "file": "assets/pages/pages-CjNzkBtD.js",
+    "file": "assets/pages/pages-Ba_mhnjE.js",
     "name": "pages/pages",
     "src": "assets/js/pages/pages.js",
     "isEntry": true,
@@ -141,7 +144,7 @@
     ]
   },
   "assets/js/pages/reset.js": {
-    "file": "assets/pages/reset-BxivP6uo.js",
+    "file": "assets/pages/reset-BHLG4CR5.js",
     "name": "pages/reset",
     "src": "assets/js/pages/reset.js",
     "isEntry": true,
@@ -150,7 +153,7 @@
     ]
   },
   "assets/js/pages/scoreboard.js": {
-    "file": "assets/pages/scoreboard-BcR8YR3z.js",
+    "file": "assets/pages/scoreboard-DHks4o90.js",
     "name": "pages/scoreboard",
     "src": "assets/js/pages/scoreboard.js",
     "isEntry": true,
@@ -159,17 +162,17 @@
     ]
   },
   "assets/js/pages/statistics.js": {
-    "file": "assets/pages/statistics-DEfh_5Cb.js",
+    "file": "assets/pages/statistics-CCtHPj5O.js",
     "name": "pages/statistics",
     "src": "assets/js/pages/statistics.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_echarts.common-DqHxtDez.js"
+      "_echarts.common-BBHlT8Fy.js"
     ]
   },
   "assets/js/pages/submissions.js": {
-    "file": "assets/pages/submissions-nlLUwHyj.js",
+    "file": "assets/pages/submissions-CDmZcdnH.js",
     "name": "pages/submissions",
     "src": "assets/js/pages/submissions.js",
     "isEntry": true,
@@ -178,19 +181,19 @@
     ]
   },
   "assets/js/pages/team.js": {
-    "file": "assets/pages/team-CHxpCba9.js",
+    "file": "assets/pages/team-CzOQHwo3.js",
     "name": "pages/team",
     "src": "assets/js/pages/team.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_graphs-D7_mhAOs.js",
-      "_CommentBox-DAFh8Ri2.js",
-      "_echarts.common-DqHxtDez.js"
+      "_graphs-Y-qJTCLC.js",
+      "_CommentBox-ktkeyXln.js",
+      "_echarts.common-BBHlT8Fy.js"
     ]
   },
   "assets/js/pages/teams.js": {
-    "file": "assets/pages/teams-CMsCf2e8.js",
+    "file": "assets/pages/teams-BaIf9LTr.js",
     "name": "pages/teams",
     "src": "assets/js/pages/teams.js",
     "isEntry": true,
@@ -199,24 +202,112 @@
     ]
   },
   "assets/js/pages/user.js": {
-    "file": "assets/pages/user-DhlNZMu5.js",
+    "file": "assets/pages/user-DgrGgioJ.js",
     "name": "pages/user",
     "src": "assets/js/pages/user.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_graphs-D7_mhAOs.js",
-      "_CommentBox-DAFh8Ri2.js",
-      "_echarts.common-DqHxtDez.js"
+      "_graphs-Y-qJTCLC.js",
+      "_CommentBox-ktkeyXln.js",
+      "_echarts.common-BBHlT8Fy.js"
     ]
   },
   "assets/js/pages/users.js": {
-    "file": "assets/pages/users-BDc58gN2.js",
+    "file": "assets/pages/users-C9UkHtFF.js",
     "name": "pages/users",
     "src": "assets/js/pages/users.js",
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js"
     ]
+  },
+  "assets/webfonts/fa-brands-400.ttf": {
+    "file": "assets/fa-brands-400-D1LuMI3I.ttf",
+    "src": "assets/webfonts/fa-brands-400.ttf"
+  },
+  "assets/webfonts/fa-brands-400.woff2": {
+    "file": "assets/fa-brands-400-D_cYUPeE.woff2",
+    "src": "assets/webfonts/fa-brands-400.woff2"
+  },
+  "assets/webfonts/fa-regular-400.ttf": {
+    "file": "assets/fa-regular-400-DZaxPHgR.ttf",
+    "src": "assets/webfonts/fa-regular-400.ttf"
+  },
+  "assets/webfonts/fa-regular-400.woff2": {
+    "file": "assets/fa-regular-400-BjRzuEpd.woff2",
+    "src": "assets/webfonts/fa-regular-400.woff2"
+  },
+  "assets/webfonts/fa-solid-900.ttf": {
+    "file": "assets/fa-solid-900-D0aA9rwL.ttf",
+    "src": "assets/webfonts/fa-solid-900.ttf"
+  },
+  "assets/webfonts/fa-solid-900.woff2": {
+    "file": "assets/fa-solid-900-CTAAxXor.woff2",
+    "src": "assets/webfonts/fa-solid-900.woff2"
+  },
+  "assets/webfonts/lato-latin-400-normal.woff": {
+    "file": "assets/lato-latin-400-normal-B11PyLys.woff",
+    "src": "assets/webfonts/lato-latin-400-normal.woff"
+  },
+  "assets/webfonts/lato-latin-400-normal.woff2": {
+    "file": "assets/lato-latin-400-normal-BEhtfm5r.woff2",
+    "src": "assets/webfonts/lato-latin-400-normal.woff2"
+  },
+  "assets/webfonts/lato-latin-700-normal.woff": {
+    "file": "assets/lato-latin-700-normal-DAdL7O4w.woff",
+    "src": "assets/webfonts/lato-latin-700-normal.woff"
+  },
+  "assets/webfonts/lato-latin-700-normal.woff2": {
+    "file": "assets/lato-latin-700-normal-BUGMgin4.woff2",
+    "src": "assets/webfonts/lato-latin-700-normal.woff2"
+  },
+  "assets/webfonts/lato-latin-ext-400-normal.woff2": {
+    "file": "assets/lato-latin-ext-400-normal-C8eBZ-j2.woff2",
+    "src": "assets/webfonts/lato-latin-ext-400-normal.woff2"
+  },
+  "assets/webfonts/lato-latin-ext-700-normal.woff2": {
+    "file": "assets/lato-latin-ext-700-normal-C5WWfNwx.woff2",
+    "src": "assets/webfonts/lato-latin-ext-700-normal.woff2"
+  },
+  "assets/webfonts/raleway-cyrillic-500-normal.woff": {
+    "file": "assets/raleway-cyrillic-500-normal-VDS6ZFBL.woff",
+    "src": "assets/webfonts/raleway-cyrillic-500-normal.woff"
+  },
+  "assets/webfonts/raleway-cyrillic-500-normal.woff2": {
+    "file": "assets/raleway-cyrillic-500-normal-z9NMSHEg.woff2",
+    "src": "assets/webfonts/raleway-cyrillic-500-normal.woff2"
+  },
+  "assets/webfonts/raleway-cyrillic-ext-500-normal.woff": {
+    "file": "assets/raleway-cyrillic-ext-500-normal-WCXIHV9w.woff",
+    "src": "assets/webfonts/raleway-cyrillic-ext-500-normal.woff"
+  },
+  "assets/webfonts/raleway-cyrillic-ext-500-normal.woff2": {
+    "file": "assets/raleway-cyrillic-ext-500-normal-DoOSefR2.woff2",
+    "src": "assets/webfonts/raleway-cyrillic-ext-500-normal.woff2"
+  },
+  "assets/webfonts/raleway-latin-500-normal.woff": {
+    "file": "assets/raleway-latin-500-normal-clx-IoRQ.woff",
+    "src": "assets/webfonts/raleway-latin-500-normal.woff"
+  },
+  "assets/webfonts/raleway-latin-500-normal.woff2": {
+    "file": "assets/raleway-latin-500-normal-DAz5TtR4.woff2",
+    "src": "assets/webfonts/raleway-latin-500-normal.woff2"
+  },
+  "assets/webfonts/raleway-latin-ext-500-normal.woff": {
+    "file": "assets/raleway-latin-ext-500-normal-DRl_EP1s.woff",
+    "src": "assets/webfonts/raleway-latin-ext-500-normal.woff"
+  },
+  "assets/webfonts/raleway-latin-ext-500-normal.woff2": {
+    "file": "assets/raleway-latin-ext-500-normal-D1t_rZ6H.woff2",
+    "src": "assets/webfonts/raleway-latin-ext-500-normal.woff2"
+  },
+  "assets/webfonts/raleway-vietnamese-500-normal.woff": {
+    "file": "assets/raleway-vietnamese-500-normal-Cw9C2Ho5.woff",
+    "src": "assets/webfonts/raleway-vietnamese-500-normal.woff"
+  },
+  "assets/webfonts/raleway-vietnamese-500-normal.woff2": {
+    "file": "assets/raleway-vietnamese-500-normal-CL-kow7V.woff2",
+    "src": "assets/webfonts/raleway-vietnamese-500-normal.woff2"
   }
 }

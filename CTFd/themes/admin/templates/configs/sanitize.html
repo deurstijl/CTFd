@@ -1,14 +1,14 @@
 <div role="tabpanel" class="tab-pane config-section" id="sanitize">
 	{% set html_sanitization = "true" if html_sanitization == True else "false" %}
 	<form method="POST" autocomplete="off" class="w-100">
-		<div class="form-group">
+		<div class="mb-4">
 			<label for="html_sanitization">
 				HTML Sanitization
 				<small class="form-text text-muted">
 					Whether CTFd will attempt to sanitize HTML content from content.
 				</small>
 			</label>
-			<select class="form-control custom-select" name="html_sanitization">
+			<select class="form-control form-select" name="html_sanitization">
 				{% if force_html_sanitization %}
 				<option>
 					Required (Disable in config.ini)
@@ -23,6 +23,6 @@
 				{% endif %}
 			</select>
 		</div>
-		<button type="submit" class="btn btn-md btn-primary float-right">Update</button>
+		<button type="submit" class="btn btn-md btn-primary float-end">Update</button>
 	</form>
 </div>
