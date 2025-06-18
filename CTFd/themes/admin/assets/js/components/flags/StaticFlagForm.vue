@@ -1,4 +1,3 @@
-<!-- components/flags/StaticFlagForm.vue -->
 <template>
   <div>
     <div class="mb-4">
@@ -12,16 +11,20 @@
         required
       />
     </div>
+
     <div class="mb-4">
-      <label for="static-data">Data (optional)</label>
-      <input
+      <label for="static-case">Case</label>
+      <select
         v-model="data"
-        type="text"
-        class="form-control"
-        id="static-data"
+        class="form-select"
+        id="static-case"
         name="data"
-      />
+      >
+        <option :value="'case_insensitive'">Case Insensitive</option>
+        <option :value="''">Case Sensitive</option>
+      </select>
     </div>
+
     <button class="btn btn-success float-end" @click="submit">
       Create Flag
     </button>
@@ -45,7 +48,7 @@ export default {
   data() {
     return {
       flag: this.initialData.content || "",
-      data: this.initialData.data || "",
+      data: this.initialData.data || "", // will be 'case_insensitive' or ''
     };
   },
   methods: {
@@ -69,4 +72,3 @@ export default {
   },
 };
 </script>
-
