@@ -28,6 +28,13 @@
       "__commonjsHelpers.min.js"
     ]
   },
+  "_tab.min.js": {
+    "file": "js/tab.min.js",
+    "name": "tab",
+    "imports": [
+      "assets/js/ezq.js"
+    ]
+  },
   "assets/css/challenge-board.scss": {
     "file": "css/challenge-board.min.css",
     "src": "assets/css/challenge-board.scss",
@@ -152,7 +159,7 @@
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "assets/js/ezq.js",
+      "_tab.min.js",
       "assets/js/styles.js",
       "assets/js/utils.js",
       "_dayjs.min.min.js",
@@ -164,6 +171,7 @@
       "assets/js/times.js",
       "assets/js/events.js",
       "assets/js/helpers.js",
+      "assets/js/ezq.js",
       "assets/js/patch.js",
       "assets/js/api.js",
       "assets/js/fetch.js"
@@ -285,11 +293,11 @@
     "isEntry": true,
     "imports": [
       "assets/js/pages/main.js",
-      "_jquery.min.js",
+      "_tab.min.js",
+      "assets/js/styles.js",
       "_dayjs.min.min.js",
       "assets/js/CTFd.js",
-      "assets/js/styles.js",
-      "_index.min.js",
+      "_jquery.min.js",
       "__commonjsHelpers.min.js",
       "assets/js/times.js",
       "assets/js/events.js",
@@ -297,6 +305,7 @@
       "assets/js/config.js",
       "assets/js/helpers.js",
       "assets/js/ezq.js",
+      "_index.min.js",
       "assets/js/patch.js",
       "assets/js/api.js",
       "assets/js/fetch.js"

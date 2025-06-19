@@ -146,11 +146,11 @@
 										<a href="#" class="btn btn-hint-light btn-block load-hint" data-hint-id="{{ hint.id }}">
 											{% if hint.cost %}
 												<small>
-													Unlock Hint for {{ hint.cost }} point(s)
+													Unlock "{{ hint.title }}" for {{ hint.cost }} point(s): 
 												</small>
 											{% else %}
 												<small>
-													View Free Hint
+													View Free Hint: "{{ hint.title }}"
 												</small>
 											{% endif %}
 										</a>

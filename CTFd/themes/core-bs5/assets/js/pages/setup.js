@@ -1,169 +1,180 @@
+//--------------------------------------------------------------------
+// ./setup.js  – Bootstrap 5, no jQuery
+//----------------------------------------------------------------------
+// If you bundle with Webpack/Vite/Rollup just import Bootstrap’s ESM build
 import "./main";
-import $ from "jquery";
-import dayjs from "dayjs";
-import CTFd from "../CTFd";
+import "bootstrap/js/dist/tab";
+import { Tab } from 'bootstrap';
+import dayjs   from 'dayjs';
+import CTFd    from '../CTFd';
 
-function switchTab(event) {
-  event.preventDefault();
+// ────────────────────────────────────────────────────────────────────
+// Helpers
+// ────────────────────────────────────────────────────────────────────
+const $ = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-  // Handle tab validation
-  let valid_tab = true;
-  $(event.target)
-    .closest("[role=tabpanel]")
-    .find("input,textarea")
-    .each(function(i, e) {
-      let $e = $(e);
-      let status = e.checkValidity();
-      if (status === false) {
-        $e.removeClass("input-filled-valid");
-        $e.addClass("input-filled-invalid");
-        valid_tab = false;
-      }
-    });
-
-  if (valid_tab == false) {
-    return;
-  }
-
-  let href = $(event.target).data("href");
-  $(`.nav a[href="${href}"]`).tab("show");
+function makeQS(obj) {
+  return Object.entries(obj)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&');
 }
 
-function processDateTime(datetime) {
-  return function(_event) {
-    let date_picker = $(`#${datetime}-date`);
-    let time_picker = $(`#${datetime}-time`);
-    let unix_time = dayjs(
-      `${date_picker.val()} ${time_picker.val()}`,
-      "YYYY-MM-DD HH:mm"
-    ).unix();
-
-    if (isNaN(unix_time)) {
-      $(`#${datetime}-preview`).val("");
-    } else {
-      $(`#${datetime}-preview`).val(unix_time);
+// Re-usable “check the file-size” guard
+function sizeGuard(input, maxBytes, msg) {
+  input.addEventListener('change', () => {
+    if (input.files?.[0]?.size > maxBytes && !confirm(msg)) {
+      input.value = '';
     }
+  });
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Tabs
+// ────────────────────────────────────────────────────────────────────
+function switchTab(ev) {
+  ev.preventDefault();
+
+  const pane = ev.target.closest('[role=tabpanel]');
+  if (!pane) return;
+
+  const invalid = $$('input,textarea', pane).some(el => {
+    const ok = el.checkValidity();
+    el.classList.toggle('input-filled-valid',  ok);
+    el.classList.toggle('input-filled-invalid', !ok);
+    return !ok;
+  });
+
+  if (invalid) return;
+
+  const href = ev.target.dataset.href;
+  const trigger = document.querySelector(`.nav a[href="${href}"]`);
+  if (trigger) new Tab(trigger).show();
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Date/time previews
+// ────────────────────────────────────────────────────────────────────
+function buildDateTimeHandler(kind) {
+  return () => {
+    const d = $(`#${kind}-date`).value;
+    const t = $(`#${kind}-time`).value;
+    const unix = dayjs(`${d} ${t}`, 'YYYY-MM-DD HH:mm').unix();
+    $(`#${kind}-preview`).value = Number.isNaN(unix) ? '' : unix;
   };
 }
 
-function mlcSetup(_event) {
-  let params = {
-    name: $("#ctf_name").val(),
-    type: "jeopardy",
-    description: $("#ctf_description").val(),
-    user_mode: $("#user_mode").val(),
-    event_url: window.location.origin + CTFd.config.urlRoot,
-    redirect_url: window.location.origin + CTFd.config.urlRoot + "/redirect",
+// ────────────────────────────────────────────────────────────────────
+// Major League Cyber integration
+// ────────────────────────────────────────────────────────────────────
+function mlcSetup() {
+  const params = {
+    name:        $('#ctf_name').value,
+    type:        'jeopardy',
+    description: $('#ctf_description').value,
+    user_mode:   $('#user_mode').value,
+    event_url:   `${location.origin}${CTFd.config.urlRoot}`,
+    redirect_url:`${location.origin}${CTFd.config.urlRoot}/redirect`,
     integration_setup_url:
-      window.location.origin + CTFd.config.urlRoot + "/setup/integrations",
-    start: $("#start-preview").val(),
-    end: $("#end-preview").val(),
-    platform: "CTFd",
-    state: window.STATE
+      `${location.origin}${CTFd.config.urlRoot}/setup/integrations`,
+    start: $('#start-preview').value,
+    end:   $('#end-preview').value,
+    platform: 'CTFd',
+    state:    window.STATE
   };
 
-  const ret = [];
-  for (let p in params) {
-    ret.push(encodeURIComponent(p) + "=" + encodeURIComponent(params[p]));
-  }
   window.open(
-    "https://www.majorleaguecyber.org/events/new?" + ret.join("&"),
-    "_blank"
+    `https://www.majorleaguecyber.org/events/new?${makeQS(params)}`,
+    '_blank'
   );
 }
 
-$(() => {
-  $(".tab-next").click(switchTab);
-  $("input").on("keypress", function(e) {
-    // Hook Enter button
-    if (e.keyCode == 13) {
-      e.preventDefault();
-      $(e.target)
-        .closest(".tab-pane")
-        .find("button[data-href]")
-        .click();
-    }
-  });
+// ────────────────────────────────────────────────────────────────────
+// Newsletter signup – JSONP via a thrown-away <script> tag
+// ────────────────────────────────────────────────────────────────────
+function subscribeNewsletter(email) {
+  const cbName = `jsonp_cb_${Date.now()}`;
+  window[cbName] = () => { delete window[cbName]; };
+  const s = document.createElement('script');
+  s.src = `https://newsletters.ctfd.io/lists/ot889gr1sa0e1/subscribe/post-json` +
+          `?c=${cbName}&email=${encodeURIComponent(email)}` +
+          `&b_38e27f7d496889133d2214208_d7c3ed71f9=`;
+  document.body.appendChild(s);
+}
 
-  $("#integration-mlc").click(mlcSetup);
+// ────────────────────────────────────────────────────────────────────
+// DOM ready
+// ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
 
-  $("#start-date,#start-time").change(processDateTime("start"));
-  $("#end-date,#end-time").change(processDateTime("end"));
+  // “Next” buttons inside the wizard
+  $$('.tab-next').forEach(btn => btn.addEventListener('click', switchTab));
 
-  $("#config-color-picker").on("input", function(_e) {
-    $("#config-color-input").val($(this).val());
-  });
-
-  $("#config-color-reset").click(function() {
-    $("#config-color-input").val("");
-    $("#config-color-picker").val("");
-  });
-
-  $("#ctf_logo").on("change", function() {
-    if (this.files[0].size > 128000) {
-      if (
-        !confirm(
-          "This image file is larger than 128KB which may result in increased load times. Are you sure you'd like to use this logo?"
-        )
-      ) {
-        this.value = "";
+  // Allow <Enter> on inputs to jump to their tab’s next button
+  $$('input').forEach(inp =>
+    inp.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        inp.closest('.tab-pane')?.querySelector('button[data-href]')?.click();
       }
-    }
+    })
+  );
+
+  // Date / time pickers → preview UNIX time
+  ['start', 'end'].forEach(kind =>
+    ['date', 'time'].forEach(f =>
+      $(`#${kind}-${f}`).addEventListener('change', buildDateTimeHandler(kind))
+    )
+  );
+
+  // CTF colour picker
+  $('#config-color-picker').addEventListener('input', e => {
+    $('#config-color-input').value = e.target.value;
+  });
+  $('#config-color-reset').addEventListener('click', () => {
+    $('#config-color-picker').value = '';
+    $('#config-color-input').value = '';
   });
 
-  $("#ctf_banner").on("change", function() {
-    if (this.files[0].size > 512000) {
-      if (
-        !confirm(
-          "This image file is larger than 512KB which may result in increased load times. Are you sure you'd like to use this icon?"
-        )
-      ) {
-        this.value = "";
-      }
-    }
-  });
+  // Image size guards
+  sizeGuard(
+    $('#ctf_logo'),
+    128_000,
+    'This image file is larger than 128 KB which may result in increased load times. Are you sure you’d like to use this logo?'
+  );
+  sizeGuard(
+    $('#ctf_banner'),
+    512_000,
+    'This image file is larger than 512 KB which may result in increased load times. Are you sure you’d like to use this icon?'
+  );
+  sizeGuard(
+    $('#ctf_small_icon'),
+    32_000,
+    'This image file is larger than 32 KB which may result in increased load times. Are you sure you’d like to use this icon?'
+  );
 
-  $("#ctf_small_icon").on("change", function() {
-    if (this.files[0].size > 32000) {
-      if (
-        !confirm(
-          "This image file is larger than 32KB which may result in increased load times. Are you sure you'd like to use this icon?"
-        )
-      ) {
-        this.value = "";
-      }
-    }
-  });
+  // MLC integration button
+  $('#integration-mlc').addEventListener('click', mlcSetup);
 
-  window.addEventListener("storage", function(event) {
-    if (event.key == "integrations" && event.newValue) {
-      let integration = JSON.parse(event.newValue);
-      if (integration["name"] == "mlc") {
-        $("#integration-mlc")
-          .text("Already Configured")
-          .attr("disabled", true);
+  // Listen for “integration completed” broadcast from the pop-up
+  window.addEventListener('storage', ev => {
+    if (ev.key === 'integrations' && ev.newValue) {
+      const integration = JSON.parse(ev.newValue);
+      if (integration.name === 'mlc') {
+        const btn = $('#integration-mlc');
+        btn.textContent = 'Already Configured';
+        btn.disabled = true;
         window.focus();
-        localStorage.removeItem("integrations");
+        localStorage.removeItem('integrations');
       }
     }
   });
 
-  $("#setup-form").submit(function(e) {
-    if ($("#newsletter-checkbox").prop("checked")) {
-      let email = $(e.target)
-        .find("input[name=email]")
-        .val();
-
-      $.ajax({
-        url:
-          "https://newsletters.ctfd.io/lists/ot889gr1sa0e1/subscribe/post-json?c=?",
-        data: {
-          email: email,
-          b_38e27f7d496889133d2214208_d7c3ed71f9: ""
-        },
-        dataType: "jsonp",
-        contentType: "application/json; charset=utf-8"
-      });
+  // Newsletter checkbox
+  $('#setup-form').addEventListener('submit', ev => {
+    if ($('#newsletter-checkbox').checked) {
+      const email = ev.target.querySelector('input[name="email"]').value;
+      subscribeNewsletter(email);
     }
   });
 });

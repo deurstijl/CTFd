@@ -39,14 +39,14 @@ const errorTpl =
   '<div class="alert alert-danger alert-dismissable" role="alert">\n' +
   '  <span class="visually-hidden">Error:</span>\n' +
   "  {0}\n" +
-  '  <button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="alert" aria-label="Close"></button>\n' +
+  '  <button type="button" class="close btn-close position-absolute p-2 end-0" data-bs-dismiss="alert" aria-label="Close"></button>\n' +
   "</div>";
 
 const successTpl =
   '<div class="alert alert-success alert-dismissable submit-row" role="alert">\n' +
   "  <strong>Success!</strong>\n" +
   "  {0}\n" +
-  '  <button type="button" class="close btn-close position-absolute p-3 end-0" data-bs-dismiss="alert" aria-label="Close"></button>\n' +
+  '  <button type="button" class="close btn-close position-absolute p-2 end-0" data-bs-dismiss="alert" aria-label="Close"></button>\n' +
   "</div>";
 
 const buttonTpl =
