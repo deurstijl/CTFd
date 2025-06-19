@@ -352,11 +352,13 @@ def init_request_processors(app):
             if nonce:
                 additional_script_src=get_app_config("CONTENT_SECURITY_POLICY_SCRIPT_SRC")
                 additional_frame_src=get_app_config("CONTENT_SECURITY_POLICY_FRAME_SRC")
+                additional_connect_src=get_app_config("CONTENT_SECURITY_POLICY_CONNECT_SRC")
                 response.headers['Content-Security-Policy'] = (
                     f"default-src 'self'; "
                     f"script-src 'self' 'nonce-{nonce}' {additional_script_src};"
                     f"style-src 'self' 'nonce-{nonce}' ;"
                     f"frame-src 'self' {additional_frame_src};"
+                    f"connect-src 'self' {additional_connect_src};"
                     f"font-src 'self' data: ; "
                     f"object-src 'none'; "
                     f"base-uri 'none'; "
