@@ -148,6 +148,7 @@ class ServerConfig(object):
 
     CONTENT_SECURITY_POLICY: str = empty_str_cast(config_ini["security"].getboolean("CONTENT_SECURITY_POLICY", fallback=False)) 
 
+    CONTENT_SECURITY_POLICY_SCRIPT_SRC: str = empty_str_cast(config_ini["security"]["CONTENT_SECURITY_POLICY_SCRIPT_SRC"]) or ""
 
     TRUSTED_HOSTS: list[str] | None = None
     if config_ini["security"].get("TRUSTED_HOSTS"):

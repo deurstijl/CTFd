@@ -350,9 +350,10 @@ def init_request_processors(app):
         if get_app_config("CONTENT_SECURITY_POLICY"):
             nonce = getattr(g, 'csp_nonce', None)
             if nonce:
+                additional_script_src=get_app_config("CONTENT_SECURITY_POLICY_SCRIPT_SRC")
                 response.headers['Content-Security-Policy'] = (
                     f"default-src 'self'; "
-                    f"script-src 'self' 'nonce-{nonce}';"
+                    f"script-src 'self' 'nonce-{nonce}' {additional_script_src};"
                     f"style-src 'self' 'nonce-{nonce}' ;"
                     f"font-src 'self' data: ; "
                     f"object-src 'none'; "
