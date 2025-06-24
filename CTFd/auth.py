@@ -1,4 +1,5 @@
 import requests
+import time
 from flask import Blueprint, abort
 from flask import current_app as app
 from flask import redirect, render_template, request, session, url_for
@@ -81,7 +82,16 @@ def confirm(data=None):
     if data is None:
         if request.method == "POST":
             # User wants to resend their confirmation email
+
+            # Check if there is a minute passed:
+            timestamp = session.get('verify_time')
+            if time.time() - timestamp < 60:
+                # wait a minute before resending
+                return render_template(
+                    "confirm.html", errors=[f"Please wait a minute before resending the email."]
+                )
             email.verify_email_address(user.email)
+            session['verify_time'] = time.time()
             log(
                 "registrations",
                 format="[{date}] {ip} - {name} initiated a confirmation email resend",
@@ -356,6 +366,8 @@ def register():
                         email=user.email,
                     )
                     email.verify_email_address(user.email)
+                    session['verify_time'] = time.time()
+
                     db.session.close()
                     return redirect(url_for("auth.confirm"))
                 else:  # Don't care about confirming users
