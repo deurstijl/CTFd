@@ -34,6 +34,7 @@ from CTFd.utils.email import sendmail, user_created_notification
 from CTFd.utils.helpers.models import build_model_filters
 from CTFd.utils.security.auth import update_user
 from CTFd.utils.user import get_current_user, get_current_user_type, is_admin
+from CTFd.utils.crypto import verify_password
 
 users_namespace = Namespace("users", description="Endpoint to retrieve Users")
 
@@ -325,6 +326,11 @@ class UserPrivate(Resource):
     def patch(self):
         user = get_current_user()
         data = request.get_json()
+
+        # Verify the current password before updating the settings
+        if not verify_password(data['confirm'],user.password):
+            return {"success": False, "errors": ["Current password is missing or incorrect"]}, 400
+
         schema = UserSchema(view="self", instance=user, partial=True)
         response = schema.load(data)
         if response.errors:
