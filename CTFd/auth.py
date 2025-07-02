@@ -85,11 +85,12 @@ def confirm(data=None):
 
             # Check if there is a minute passed:
             timestamp = session.get('verify_time')
-            if time.time() - timestamp < 60:
-                # wait a minute before resending
-                return render_template(
-                    "confirm.html", errors=[f"Please wait a minute before resending the email."]
-                )
+            if timestamp:
+                if time.time() - timestamp < 60:
+                    # wait a minute before resending
+                    return render_template(
+                        "confirm.html", errors=[f"Please wait a minute before resending the email."]
+                    )
             email.verify_email_address(user.email)
             session['verify_time'] = time.time()
             log(
