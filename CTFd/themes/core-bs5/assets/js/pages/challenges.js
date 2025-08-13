@@ -322,10 +322,21 @@ function loadChals() {
       row.className = "pt-5";
       row.innerHTML = `
         <div class="category-header col-md-12 mb-3">
-          <h3>${category}</h3>
+          <button
+            class="btn btn-link p-0 fs-3 text-decoration-none d-inline-flex align-items-center"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#${catId}_challenges"
+            aria-expanded="true"
+            aria-controls="${catId}_challenges"
+          >
+            <h3>${category}</h3>
+          </button>
         </div>
-        <div class="category-challenges col-md-12">
-          <div class="challenges-row col-md-12"></div>
+        <div id="${catId}_challenges" class="collapse show">
+          <div class="category-challenges col-md-12">
+            <div class="challenges-row col-md-12"></div>
+          </div>
         </div>`;
       board.appendChild(row);
     });
